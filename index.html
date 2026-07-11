@@ -3,362 +3,407 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rxz Script</title>
+    <title>Video Capture & Link Checker</title>
     <style>
-        /* إعدادات الخلفية البنفسجية والخطوط */
-        body {
+        :root {
+            --bg: #0b0f19;
+            --panel: #131c2e;
+            --green: #00ff66;
+            --blue: #3b82f6;
+            --red: #ff3366;
+            --text: #ffffff;
+            --muted: #64748b;
+            --border: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #0d001a; /* بنفسجي غامق جداً */
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
-            text-align: center;
+            font-family: sans-serif;
         }
 
-        /* تأثير النيازك/الشهب 🌠 */
-        #meteors-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(ellipse at bottom, #1d003a 0%, #0d001a 100%);
-        }
-
-        .meteor {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px white, 0 0 20px #bf00ff; /* توهج بنفسجي */
-            opacity: 0;
-            animation: meteor-fall linear infinite;
-        }
-
-        /* تأثير الذيل للنيزك */
-        .meteor::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 80px;
-            height: 1px;
-            background: linear-gradient(90deg, white, transparent);
-        }
-
-        @keyframes meteor-fall {
-            0% {
-                top: -50px;
-                opacity: 0;
-                transform: translateX(0px) scale(1);
-            }
-            1% {
-                opacity: 1;
-            }
-            100% {
-                top: 100vh;
-                opacity: 0;
-                transform: translateX(-300px) scale(0.5); /* حركة مائلة */
-            }
-        }
-
-        /* الهيدر والصورة الدائرية 🖼️ */
-        header {
-            padding: 100px 20px;
-            position: relative;
-        }
-
-        .profile-img-container {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 30px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid #bf00ff; /* إطار بنفسجي مضيء */
-            box-shadow: 0 0 20px #bf00ff;
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
-        .profile-img {
+        .section {
+            width: 100%;
+            max-width: 850px;
+            background: var(--panel);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--blue);
+            border-radius: 12px;
+            padding: 30px;
+            cursor: pointer;
+            background: rgba(59, 130, 246, 0.03);
+            margin-bottom: 15px;
+        }
+
+        #videoInput { display: none; }
+
+        #videoPreview {
+            width: 100%;
+            max-height: 350px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            background: #000;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-capture { background: var(--blue); }
+        .btn-copy { background: #475569; display: none; }
+        .btn-check { background: var(--red); width: auto; padding: 0 20px; }
+
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #1e293b;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--blue), var(--green));
+        }
+
+        #progressText {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .gallery-container {
+            width: 100%;
+            max-width: 850px;
+            display: none;
+        }
+
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .capture-card {
+            background: #162238;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .capture-card img {
             width: 100%;
             height: auto;
             display: block;
+            cursor: pointer;
         }
 
-        .badge {
-            background: rgba(191, 0, 255, 0.2); /* بنفسجي شفاف */
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            border: 1px solid #bf00ff;
-            color: #efb3ff;
-            margin-top: 15px;
-            display: inline-block;
-        }
-
-        h1 {
-            font-size: 4rem;
-            margin: 10px 0;
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px #bf00ff; /* توهج بنفسجي للعنوان */
-            color: #f2ccff;
-        }
-
-        .subtitle {
-            font-size: 1.5rem;
-            color: #d9b3ff;
-            margin-bottom: 30px;
-        }
-
-        .description {
-            color: #c9a3ff;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* تصميم كروت السكربتات */
-        .scripts-section {
-            padding: 50px 20px;
-        }
-
-        .script-card {
-            background: rgba(30, 0, 60, 0.4); /* بنفسجي شفاف للكروت */
-            border: 1px solid rgba(191, 0, 255, 0.3);
-            border-radius: 15px;
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 25px;
-            backdrop-filter: blur(10px);
-            transition: 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .script-card:hover {
-            border-color: #bf00ff;
-            transform: translateY(-5px);
-            box-shadow: 0 5px 30px rgba(191, 0, 255, 0.3);
-        }
-
-        .script-header {
+        .capture-info {
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(191, 0, 255, 0.2);
-            padding-bottom: 10px;
-        }
-
-        .script-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: #f2ccff;
-        }
-
-        .lua-box {
-            background: #080010; /* خلفية الكود غامقة جداً */
-            padding: 15px;
-            border-radius: 10px;
-            font-family: 'Courier New', Courier, monospace;
+            background: #0f172a;
             font-size: 0.9rem;
-            color: #e6ccff;
-            text-align: left;
-            direction: ltr;
-            overflow-x: auto;
-            border: 1px solid #1a0033;
-            margin-bottom: 15px;
         }
 
-        /* تنسيق زر النسخ 📋 */
-        .copy-btn {
-            background: #bf00ff; /* بنفسجي زاهي للزر */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #4b5563;
+            background: #1f2937;
+            color: white;
+            outline: none;
+            text-align: left;
+        }
+
+        #checkerResult {
+            margin-top: 15px;
+            display: none;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #374151;
+            background: #000;
+        }
+
+        #checkerResult img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            display: block;
+            cursor: pointer;
+        }
+
+        .viewer-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .viewer-overlay img {
+            max-width: 95%;
+            max-height: 85%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--red);
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
             cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-right: auto;
-            transition: 0.2s;
-            box-shadow: 0 2px 10px rgba(191, 0, 255, 0.4);
-        }
-
-        .copy-btn:hover {
-            background: #df80ff; /* بنفسجي فاتح عند التأشير */
-            box-shadow: 0 4px 15px rgba(191, 0, 255, 0.6);
-        }
-
-        .copy-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* رسالة تأكيد النسخ */
-        .copy-status {
-            position: absolute;
-            bottom: 25px;
-            right: 25px;
-            color: #00ff88; /* أخضر للنجاح */
-            font-weight: bold;
-            font-size: 0.9rem;
-            opacity: 0;
-            transition: 0.3s;
-        }
-
-        .copy-status.show {
-            opacity: 1;
-        }
-
-        /* قسم الديسكورد 💬 */
-        .discord-section {
-            background: rgba(30, 0, 60, 0.3);
-            border-radius: 20px;
-            max-width: 700px;
-            margin: 100px auto 50px;
-            padding: 40px;
-            border: 1px solid rgba(191, 0, 255, 0.2);
-            position: relative;
-        }
-
-        .discord-btn {
-            background: white; /* أبيض للزر ليبرز */
-            color: #0d001a;
-            text-decoration: none;
-            padding: 15px 40px;
-            border-radius: 10px;
-            display: inline-block;
-            font-weight: bold;
-            margin-top: 20px;
-            transition: 0.2s;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .discord-btn:hover {
-            background: #f2ccff;
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.5);
-        }
-
-        footer {
-            padding: 40px;
-            color: #8c66a3;
-            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-<div id="meteors-container"></div>
-
-<header>
-    <div class="profile-img-container">
-        <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2533.jpeg" alt="Rxz Logo" class="profile-img">
-    </div>
-    
-    <h1>Rxz</h1>
-    <div class="subtitle">Script 🌠</div>
-    <p class="description">سكربتات احترافية بأداء عالي وجودة استثنائية. بنفسجي فخم وتجربة أسطورية.</p>
-    <span class="badge">● النسخة الأحدث متاحة الآن</span>
-</header>
-
-<div class="scripts-section">
-    <div class="script-card">
-        <div class="script-header">
-            <span class="script-name">Alone Script</span>
+    <div class="section">
+        <div class="upload-zone" onclick="document.getElementById('videoInput').click()">
+            <input type="file" id="videoInput" accept="video/*">
+            <video id="videoPreview" controls></video>
         </div>
-        <div class="lua-box" id="s1">loadstring(game:HttpGet("https://raw.githubusercontent.com/salihmahdu11-oss/SA-ALONE/refs/heads/main/SA%20%7C%20PVP"))()</div>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <button class="copy-btn" onclick="copyText('s1', this)">نسخ السكربت 📋</button>
-            <span class="copy-status">تم نسخ السكربت! ✔️</span>
+
+        <div class="btn-group">
+            <button id="captureBtn" class="btn btn-capture" style="display:none;">رصد</button>
+            <button id="copyLinksBtn" class="btn btn-copy">نسخ جميع روابط الصور</button>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <p id="progressText"></p>
         </div>
     </div>
 
-    <div class="script-card">
-        <div class="script-header">
-            <span class="script-name">z3 Script</span>
-        </div>
-        <div class="lua-box" id="s2">loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/89e7717db605d4502c0b92a1a77e49f8.lua"))()</div>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <button class="copy-btn" onclick="copyText('s2', this)">نسخ السكربت 📋</button>
-            <span class="copy-status">تم نسخ السكربت! ✔️</span>
-        </div>
+    <div class="gallery-container" id="galleryContainer">
+        <div class="gallery" id="gallery"></div>
     </div>
-</div>
 
-<div class="discord-section">
-    <h3>انضم لسيرفر Rxz</h3>
-    <p>انضم لمجتمعنا الأسطوري على ديسكورد! سكربتات حصرية، فعاليات مستمرة، ودعم فني مباشر تحت سماء النيازك 🌠</p>
-    <a href="https://discord.gg/rxz" class="discord-btn">انضم الآن 💬</a>
-</div>
+    <div class="section" style="background: #111827;">
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="رابط الصورة المباشر" dir="ltr">
+            <button class="btn btn-check" id="checkBtn">فحص</button>
+        </div>
+        <div id="checkerResult"></div>
+    </div>
 
-<footer>
-    © Rxz Script 2026 — جميع الحقوق محفوظة
-</footer>
+    <div class="viewer-overlay" id="viewerOverlay">
+        <button class="close-btn" id="closeViewer">X</button>
+        <img id="viewerImage" src="" alt="">
+    </div>
 
-<script>
-    // إنشاء النيازك برمجياً
-    const container = document.getElementById('meteors-container');
-    const meteorCount = 20; // عدد النيازك
+    <canvas id="hiddenCanvas" style="display:none;"></canvas>
 
-    for (let i = 0; i < meteorCount; i++) {
-        createMeteor();
-    }
+    <script>
+        // ضع بيانات حسابك هنا ليعمل الرفع مباشرة
+        const GITHUB_TOKEN = "ضع_التوكن_هنا"; 
+        const GITHUB_REPO = "اسم_المستخدم/اسم_المستودع"; 
+        const GITHUB_BRANCH = "main"; 
 
-    function createMeteor() {
-        const meteor = document.createElement('div');
-        meteor.className = 'meteor';
-        
-        // إعدادات عشوائية لكل نيزك
-        meteor.style.left = Math.random() * 130 + 'vw'; // يبدأ من اليمين خارج الشاشة
-        meteor.style.top = Math.random() * 50 + 'vh'; // يبدأ من النصف العلوي
-        meteor.style.animationDuration = Math.random() * 2 + 1 + 's'; // سرعة السقوط
-        meteor.style.animationDelay = Math.random() * 10 + 's'; // تأخير عشوائي
-        
-        container.appendChild(meteor);
+        const videoInput = document.getElementById('videoInput');
+        const videoPreview = document.getElementById('videoPreview');
+        const captureBtn = document.getElementById('captureBtn');
+        const copyLinksBtn = document.getElementById('copyLinksBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const galleryContainer = document.getElementById('galleryContainer');
+        const gallery = document.getElementById('gallery');
+        const canvas = document.getElementById('hiddenCanvas');
+        const ctx = canvas.getContext('2d');
+        const viewerOverlay = document.getElementById('viewerOverlay');
+        const viewerImage = document.getElementById('viewerImage');
+        const closeViewer = document.getElementById('closeViewer');
+        const urlInput = document.getElementById('urlInput');
+        const checkBtn = document.getElementById('checkBtn');
+        const checkerResult = document.getElementById('checkerResult');
 
-        // إعادة إنشاء النيزك بعد انتهاء الأنميشن ليظهر مرة أخرى
-        meteor.addEventListener('animationiteration', () => {
-            meteor.style.left = Math.random() * 130 + 'vw';
-            meteor.style.top = Math.random() * 50 + 'vh';
-            meteor.style.animationDuration = Math.random() * 2 + 1 + 's';
+        let duration = 0;
+        let uploadedLinks = [];
+
+        videoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                videoPreview.src = URL.createObjectURL(file);
+                videoPreview.style.display = 'block';
+                captureBtn.style.display = 'block';
+                copyLinksBtn.style.display = 'none';
+                gallery.innerHTML = '';
+                galleryContainer.style.display = 'none';
+                progressContainer.style.display = 'none';
+                uploadedLinks = [];
+                videoPreview.onloadedmetadata = function() { duration = videoPreview.duration; };
+            }
         });
-    }
 
-    // وظيفة النسخ مع تأثير التأكيد 📋
-    function copyText(id, btnElement) {
-        const text = document.getElementById(id).innerText;
-        const statusElement = btnElement.nextElementSibling; // تحديد عنصر الحالة
-
-        navigator.clipboard.writeText(text).then(() => {
-            // إظهار رسالة التأكيد
-            statusElement.classList.add('show');
+        // دالة الرفع وإنتاج رابط الـ Raw المباشر بامتداد .jpg
+        async function uploadToGitHub(base64Data, filename) {
+            if(GITHUB_TOKEN.startsWith("ضع_")) return null;
+            const cleanBase64 = base64Data.split(',')[1];
+            const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filename}`;
             
-            // تغيير نص الزر مؤقتاً
-            const originalBtnText = btnElement.innerText;
-            btnElement.innerText = "تم النسخ! ✔️";
-            btnElement.style.background = "#00ff88"; // تغيير لون الزر للنجاح
-            btnElement.style.color = "#0d001a";
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Upload ${filename}`,
+                        content: cleanBase64,
+                        branch: GITHUB_BRANCH
+                    })
+                });
+                if(response.ok) {
+                    // إرجاع رابط الـ raw المباشر للصورة بنطاق jpg
+                    return `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${filename}`;
+                }
+            } catch(e) { console.error(e); }
+            return null;
+        }
 
-            // إخفاء الرسالة وإعادة الزر بعد ثانيتين
-            setTimeout(() => {
-                statusElement.classList.remove('show');
-                btnElement.innerText = originalBtnText;
-                btnElement.style.background = ""; // إعادة اللون الأصلي
-                btnElement.style.color = "";
-            }, 2000);
-        }).catch(err => {
-            console.error('فشل النسخ: ', err);
-            alert('عذراً، لم نتمكن من نسخ السكربت.');
+        captureBtn.addEventListener('click', async function() {
+            if (!duration) return;
+            captureBtn.disabled = true;
+            progressContainer.style.display = 'block';
+            galleryContainer.style.display = 'block';
+            gallery.innerHTML = '';
+            uploadedLinks = [];
+
+            canvas.width = videoPreview.videoWidth;
+            canvas.height = videoPreview.videoHeight;
+
+            const step = 0.1; 
+            const timestampId = Date.now();
+
+            for (let time = 0; time <= duration; time += step) {
+                videoPreview.currentTime = time;
+                await new Promise(r => videoPreview.onseeked = r);
+
+                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const formattedTime = time.toFixed(2).replace('.', ',');
+
+                // تسمية الملف بنطاق .jpg ليكون متوافقاً
+                const filename = `snap_${timestampId}_${time.toFixed(2).replace('.', '_')}.jpg`;
+                const githubRawUrl = await uploadToGitHub(imgData, filename);
+                
+                if(githubRawUrl) {
+                    uploadedLinks.push(githubRawUrl);
+                }
+
+                const card = document.createElement('div');
+                card.className = 'capture-card';
+                const img = document.createElement('img');
+                img.src = imgData;
+                img.onclick = () => { viewerImage.src = imgData; viewerOverlay.style.display = 'flex'; };
+
+                const info = document.createElement('div');
+                info.className = 'capture-info';
+                info.innerHTML = `<span>⏱️ ${formattedTime}</span>`;
+
+                card.appendChild(img);
+                card.appendChild(info);
+                gallery.appendChild(card);
+
+                const pct = Math.round((time / duration) * 100);
+                progressFill.style.width = pct + '%';
+                progressText.innerText = `${formattedTime}`;
+            }
+            captureBtn.disabled = false;
+            if(uploadedLinks.length > 0) {
+                copyLinksBtn.style.display = 'block';
+            }
         });
-    }
-</script>
 
+        // نسخ جميع روابط الـ Raw المباشرة المستخرجة دفعة واحدة عند الضغط
+        copyLinksBtn.addEventListener('click', function() {
+            if(uploadedLinks.length === 0) return;
+            const linksText = uploadedLinks.join('\n');
+            navigator.clipboard.writeText(linksText).then(() => {
+                alert('تم نسخ جميع روابط الـ Raw بنجاح!');
+            });
+        });
+
+        closeViewer.onclick = function() { viewerOverlay.style.display = 'none'; };
+
+        checkBtn.addEventListener('click', function() {
+            const url = urlInput.value.trim();
+            if(!url) return;
+
+            checkerResult.innerHTML = '';
+            checkerResult.style.display = 'block';
+
+            const checkedImg = document.createElement('img');
+            checkedImg.src = url;
+            
+            checkedImg.onload = function() {
+                checkerResult.appendChild(checkedImg);
+                checkedImg.onclick = () => { viewerImage.src = url; viewerOverlay.style.display = 'flex'; };
+            };
+            checkedImg.onerror = function() {
+                checkerResult.innerHTML = `<p style="padding: 15px; color: var(--red);">Error</p>`;
+            };
+        });
+    </script>
 </body>
 </html>
