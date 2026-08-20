@@ -32,7 +32,6 @@
         .extra{color:#ccc;font-size:14px;line-height:1.8;margin-top:15px;padding-top:15px;border-top:1px solid #2a2a2a}
         .extra span{color:#fff;font-weight:500}
         .status{color:#ffa500;text-align:center;margin-top:15px;font-size:14px;min-height:24px}
-        .webhook-status{color:#aaa;font-size:14px;text-align:center;margin-top:8px}
         .footer{margin-top:25px;text-align:center;color:#555;font-size:13px;border-top:1px solid #222;padding-top:18px}
         @media(max-width:500px){.container{padding:25px 20px}.profile{flex-direction:column;align-items:center;text-align:center}.profile .info .un{text-align:center}.stats{grid-template-columns:1fr 1fr}}
     </style>
@@ -40,15 +39,10 @@
 <body>
 <div class="container">
     <h1>🎣 صيد تيك توك</h1>
-    <div class="sub">أدخل اسم المستخدم واضغط «تفعيل»</div>
+    <div class="sub">أدخل اسم المستخدم واضغط «تفعيل» لعرض كل المعلومات</div>
     <div class="group">
         <label>👤 اسم المستخدم</label>
         <input type="text" id="username" placeholder="@example" value="@mrbeast">
-    </div>
-    <div class="group">
-        <label>🔗 رابط Webhook</label>
-        <input type="url" id="webhook" placeholder="https://discord.com/api/webhooks/...">
-        <div id="webhookStatus" class="webhook-status"></div>
     </div>
     <button class="btn" id="fetchBtn">🚀 تفعيل</button>
     <div id="statusMsg" class="status"></div>
@@ -82,11 +76,9 @@
 <script>
     (() => {
         const usernameInput = document.getElementById('username');
-        const webhookInput = document.getElementById('webhook');
         const fetchBtn = document.getElementById('fetchBtn');
         const statusMsg = document.getElementById('statusMsg');
         const resultBox = document.getElementById('resultBox');
-        const webhookStatus = document.getElementById('webhookStatus');
         const avatar = document.getElementById('avatar');
         const displayName = document.getElementById('displayName');
         const uniqueId = document.getElementById('uniqueId');
@@ -112,41 +104,6 @@
             return data.data;
         };
 
-        const sendToWebhook = async (url, data) => {
-            const embed = {
-                title: '🎣 تم صيد مستخدم تيك توك',
-                color: 0x00d4ff,
-                thumbnail: { url: data.avatar },
-                fields: [
-                    { name: '👤 الاسم', value: data.nickname || '—', inline: true },
-                    { name: '🆔 المعرف', value: data.unique_id || '—', inline: true },
-                    { name: '✅ موثّق', value: data.verified ? 'نعم' : 'لا', inline: true },
-                    { name: '👥 متابعون', value: data.follower_count || 0, inline: true },
-                    { name: '📌 متابع', value: data.following_count || 0, inline: true },
-                    { name: '❤️ إعجابات', value: data.heart_count || 0, inline: true },
-                    { name: '🎬 فيديوهات', value: data.video_count || 0, inline: true },
-                    { name: '📝 البايو', value: data.signature || '—', inline: false },
-                    { name: '🔗 الرابط', value: data.link || '—', inline: false },
-                    { name: '🌍 المنطقة', value: data.region || '—', inline: true },
-                    { name: '📅 الانضمام', value: data.create_time ? new Date(data.create_time * 1000).toLocaleDateString() : '—', inline: true },
-                    { name: '📺 البثوث', value: data.live_count || 'غير متاح', inline: true },
-                ],
-                footer: { text: 'صيد-معلومات-يوزر-تيك' },
-                timestamp: new Date().toISOString()
-            };
-            const payload = {
-                username: 'صيد-معلومات-يوزر-تيك',
-                embeds: [embed]
-            };
-            const resp = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            return true;
-        };
-
         const displayData = (data) => {
             avatar.src = data.avatar || '';
             displayName.textContent = data.nickname || '—';
@@ -166,103 +123,33 @@
             resultBox.classList.add('show');
         };
 
-        const testWebhook = async (url) => {
-            try {
-                const testPayload = {
-                    content: '🔍 اختبار الاتصال بـ Webhook',
-                    embeds: [{
-                        title: 'اختبار',
-                        description: 'تم الاتصال بنجاح',
-                        color: 0x00ff00,
-                        footer: { text: 'صيد-معلومات-يوزر-تيك' }
-                    }]
-                };
-                const resp = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(testPayload)
-                });
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                return true;
-            } catch (e) {
-                return false;
-            }
-        };
-
         const handle = async () => {
             const username = usernameInput.value.trim();
-            const webhook = webhookInput.value.trim();
-
             if (!username) {
                 statusMsg.textContent = '⚠️ أدخل اسم المستخدم';
                 statusMsg.style.color = '#ffa500';
                 return;
             }
-
             fetchBtn.disabled = true;
             fetchBtn.textContent = '⏳ جاري...';
             statusMsg.textContent = '🔄 جلب البيانات...';
             statusMsg.style.color = '#00d4ff';
             resultBox.classList.remove('show');
-            webhookStatus.textContent = '';
-
-            let userData = null;
             try {
-                userData = await fetchUser(username);
-                displayData(userData);
-                statusMsg.textContent = '✅ تم جلب البيانات';
+                const data = await fetchUser(username);
+                displayData(data);
+                statusMsg.textContent = '✅ تم جلب كل المعلومات';
                 statusMsg.style.color = '#0f0';
             } catch (err) {
                 statusMsg.textContent = `❌ ${err.message}`;
                 statusMsg.style.color = '#ff4444';
-                fetchBtn.disabled = false;
-                fetchBtn.textContent = '🚀 تفعيل';
-                return;
             }
-
-            if (webhook) {
-                try {
-                    const sent = await sendToWebhook(webhook, userData);
-                    if (sent) {
-                        webhookStatus.textContent = '✅ الرابط ضبط';
-                        webhookStatus.style.color = '#0f0';
-                    } else {
-                        webhookStatus.textContent = '❌ فشل الإرسال';
-                        webhookStatus.style.color = '#ff4444';
-                    }
-                } catch (e) {
-                    webhookStatus.textContent = '❌ فشل الإرسال: ' + e.message;
-                    webhookStatus.style.color = '#ff4444';
-                }
-            } else {
-                webhookStatus.textContent = '⚠️ لم يتم إدخال رابط';
-                webhookStatus.style.color = '#ffa500';
-            }
-
             fetchBtn.disabled = false;
             fetchBtn.textContent = '🚀 تفعيل';
         };
 
         fetchBtn.addEventListener('click', handle);
         usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handle(); });
-
-        webhookInput.addEventListener('change', async () => {
-            const url = webhookInput.value.trim();
-            if (!url) {
-                webhookStatus.textContent = '';
-                return;
-            }
-            webhookStatus.textContent = '⏳ جاري التحقق...';
-            webhookStatus.style.color = '#ffa500';
-            const ok = await testWebhook(url);
-            if (ok) {
-                webhookStatus.textContent = '✅ الرابط صحيح';
-                webhookStatus.style.color = '#0f0';
-            } else {
-                webhookStatus.textContent = '❌ الرابط غير صالح أو فشل الاتصال';
-                webhookStatus.style.color = '#ff4444';
-            }
-        });
     })();
 </script>
 </body>
