@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صيد تيك توك</title>
+    <title> ®️c7 صيد تيك توك</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{background:#0f0f0f;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;direction:rtl;padding:20px}
@@ -33,6 +33,7 @@
         .extra span{color:#fff;font-weight:500}
         .status{color:#ffa500;text-align:center;margin-top:15px;font-size:14px;min-height:24px}
         .footer{margin-top:25px;text-align:center;color:#555;font-size:13px;border-top:1px solid #222;padding-top:18px}
+        .retry-btn{background:#444;color:#fff;border:none;padding:6px 16px;border-radius:8px;cursor:pointer;margin-top:5px}
         @media(max-width:500px){.container{padding:25px 20px}.profile{flex-direction:column;align-items:center;text-align:center}.profile .info .un{text-align:center}.stats{grid-template-columns:1fr 1fr}}
     </style>
 </head>
@@ -41,8 +42,8 @@
     <h1>🎣 صيد تيك توك</h1>
     <div class="sub">أدخل اسم المستخدم واضغط «تفعيل» لعرض كل المعلومات</div>
     <div class="group">
-        <label>👤 اسم المستخدم</label>
-        <input type="text" id="username" placeholder="@example" value="@mrbeast">
+        <label>👤 اسم المستخدم (مثال: @mrbeast)</label>
+        <input type="text" id="username" placeholder="@mrbeast" value="@mrbeast">
     </div>
     <button class="btn" id="fetchBtn">🚀 تفعيل</button>
     <div id="statusMsg" class="status"></div>
@@ -96,11 +97,14 @@
         const privateAcc = document.getElementById('private');
 
         const fetchUser = async (username) => {
-            const clean = username.replace(/^@/, '');
-            const resp = await fetch(`https://www.tikwm.com/api/user?unique_id=${clean}`);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const clean = username.replace(/^@/, '').trim();
+            if (!clean) throw new Error('اسم المستخدم فارغ');
+            const url = `https://www.tikwm.com/api/user?unique_id=${encodeURIComponent(clean)}`;
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`فشل الاتصال: ${resp.status}`);
             const data = await resp.json();
-            if (data.code !== 0) throw new Error(data.msg || 'غير موجود');
+            if (data.code !== 0) throw new Error(data.msg || 'المستخدم غير موجود');
+            if (!data.data || !data.data.uid) throw new Error('بيانات غير مكتملة');
             return data.data;
         };
 
@@ -116,7 +120,7 @@
             bio.textContent = data.signature || '—';
             link.textContent = data.link || '—';
             region.textContent = data.region || '—';
-            joinDate.textContent = data.create_time ? new Date(data.create_time * 1000).toLocaleDateString() : '—';
+            joinDate.textContent = data.create_time ? new Date(data.create_time * 1000).toLocaleDateString('ar-EG') : '—';
             liveCount.textContent = data.live_count || 'غير متاح';
             verified.textContent = data.verified ? '✅ نعم' : '❌ لا';
             privateAcc.textContent = data.private ? '🔒 نعم' : '🔓 لا';
@@ -138,11 +142,12 @@
             try {
                 const data = await fetchUser(username);
                 displayData(data);
-                statusMsg.textContent = '✅ تم جلب كل المعلومات';
+                statusMsg.textContent = '✅ تم جلب كل المعلومات بنجاح';
                 statusMsg.style.color = '#0f0';
             } catch (err) {
                 statusMsg.textContent = `❌ ${err.message}`;
                 statusMsg.style.color = '#ff4444';
+                resultBox.classList.remove('show');
             }
             fetchBtn.disabled = false;
             fetchBtn.textContent = '🚀 تفعيل';
