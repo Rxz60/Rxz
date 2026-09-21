@@ -1,161 +1,153 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> ®️c7 صيد تيك توك</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#0f0f0f;font-family:sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;direction:rtl;padding:20px}
-        .container{background:#1e1e1e;border-radius:30px;padding:40px;max-width:700px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,0.8);border:1px solid #333}
-        h1{color:#fff;text-align:center;font-size:28px;margin-bottom:10px}
-        .sub{color:#aaa;text-align:center;font-size:15px;margin-bottom:30px;border-bottom:1px solid #2a2a2a;padding-bottom:15px}
-        .group{display:flex;flex-direction:column;gap:12px;margin-bottom:25px}
-        .group label{color:#ccc;font-size:16px}
-        .group input{padding:14px 18px;border-radius:16px;border:1px solid #333;background:#1e1e1e;color:#fff;font-size:16px;outline:none;transition:0.3s}
-        .group input:focus{border-color:#00d4ff;box-shadow:0 0 15px rgba(0,212,255,0.2)}
-        .btn{width:100%;padding:16px;border:none;border-radius:16px;font-size:20px;font-weight:700;background:linear-gradient(135deg,#00d4ff,#0088cc);color:#fff;cursor:pointer;transition:0.3s;box-shadow:0 4px 20px rgba(0,212,255,0.3);margin-top:10px}
-        .btn:hover{transform:scale(1.02)}
-        .btn:active{transform:scale(0.97)}
-        .btn:disabled{opacity:0.6;cursor:not-allowed}
-        .result{display:none;margin-top:30px;background:#1a1a1a;border-radius:16px;padding:20px;border:1px solid #2a2a2a}
-        .result.show{display:block}
-        .profile{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
-        .profile img{width:80px;height:80px;border-radius:50%;border:3px solid #00d4ff;object-fit:cover;background:#222}
-        .profile .info{flex:1}
-        .profile .info h2{color:#fff;font-size:22px}
-        .profile .info .un{color:#888;font-size:16px;direction:ltr;text-align:left}
-        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:15px;margin:20px 0}
-        .stat-card{background:#252525;padding:15px 10px;border-radius:14px;text-align:center;border:1px solid #333}
-        .stat-card .num{color:#00d4ff;font-size:22px;font-weight:700;display:block}
-        .stat-card .lab{color:#aaa;font-size:13px;margin-top:5px}
-        .extra{color:#ccc;font-size:14px;line-height:1.8;margin-top:15px;padding-top:15px;border-top:1px solid #2a2a2a}
-        .extra span{color:#fff;font-weight:500}
-        .status{color:#ffa500;text-align:center;margin-top:15px;font-size:14px;min-height:24px}
-        .footer{margin-top:25px;text-align:center;color:#555;font-size:13px;border-top:1px solid #222;padding-top:18px}
-        .retry-btn{background:#444;color:#fff;border:none;padding:6px 16px;border-radius:8px;cursor:pointer;margin-top:5px}
-        @media(max-width:500px){.container{padding:25px 20px}.profile{flex-direction:column;align-items:center;text-align:center}.profile .info .un{text-align:center}.stats{grid-template-columns:1fr 1fr}}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webhook Sender ⚡</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, sans-serif; }
+  body { background:#0d0d14; color:#e0e0e0; min-height:100vh; padding:30px 15px; }
+  .container { max-width:680px; margin:auto; }
+  h1 { text-align:center; color:#7b5cff; margin-bottom:5px; }
+  .sub { text-align:center; color:#888; margin-bottom:25px; font-size:14px; }
+  .card { background:#16161f; border:1px solid #2a2a3a; border-radius:14px; padding:22px; margin-bottom:18px; }
+  label { display:block; margin:12px 0 6px; color:#a89bff; font-size:13px; font-weight:600; }
+  input, textarea, select { width:100%; background:#0d0d14; border:1px solid #33334a; color:#fff; border-radius:8px; padding:11px; font-size:14px; outline:none; }
+  input:focus, textarea:focus { border-color:#7b5cff; }
+  textarea { resize:vertical; min-height:80px; }
+  .row { display:flex; gap:12px; }
+  .row > div { flex:1; }
+  .hint { font-size:11px; color:#666; margin-top:4px; }
+  button { width:100%; padding:14px; border:none; border-radius:10px; font-size:16px; font-weight:bold; cursor:pointer; margin-top:15px; transition:.2s; }
+  .send { background:linear-gradient(90deg,#7b5cff,#5c8aff); color:#fff; }
+  .send:hover { opacity:.85; }
+  .stop { background:#ff4757; color:#fff; margin-top:8px; display:none; }
+  .stats { display:flex; gap:10px; margin-top:15px; }
+  .stat { flex:1; background:#0d0d14; border-radius:10px; padding:12px; text-align:center; }
+  .stat b { display:block; font-size:22px; color:#7b5cff; }
+  .stat span { font-size:11px; color:#888; }
+  #log { margin-top:15px; max-height:180px; overflow-y:auto; background:#0d0d14; border-radius:10px; padding:10px; font-size:12px; font-family:monospace; direction:ltr; text-align:left; }
+  .ok { color:#2ed573; } .err { color:#ff4757; }
+  details { margin-top:12px; } summary { cursor:pointer; color:#a89bff; font-size:13px; }
+</style>
 </head>
 <body>
 <div class="container">
-    <h1>🎣 صيد تيك توك</h1>
-    <div class="sub">أدخل اسم المستخدم واضغط «تفعيل» لعرض كل المعلومات</div>
-    <div class="group">
-        <label>👤 اسم المستخدم (مثال: @mrbeast)</label>
-        <input type="text" id="username" placeholder="@mrbeast" value="@mrbeast">
+  <h1>⚡ Webhook Sender</h1>
+  <p class="sub">أرسل رسائل متعددة بسرعة — تحكم كامل بالعدد والتوقيت</p>
+
+  <div class="card">
+    <label>🔗 رابط الويبهوك (Webhook URL)</label>
+    <input id="url" placeholder="https://discord.com/api/webhooks/...">
+
+    <div class="row">
+      <div>
+        <label>📨 عدد الرسائل</label>
+        <input id="count" type="number" value="10" min="1">
+      </div>
+      <div>
+        <label>⏱️ الفاصل بين كل رسالة (ثانية)</label>
+        <input id="delay" type="number" value="0.5" step="0.1" min="0">
+        <p class="hint">0 = أسرع سرعة ممكنة | 0.5 = نص ثانية</p>
+      </div>
     </div>
-    <button class="btn" id="fetchBtn">🚀 تفعيل</button>
-    <div id="statusMsg" class="status"></div>
-    <div class="result" id="resultBox">
-        <div class="profile">
-            <img id="avatar" src="">
-            <div class="info">
-                <h2 id="displayName">—</h2>
-                <div class="un" id="uniqueId">—</div>
-            </div>
-        </div>
-        <div class="stats">
-            <div class="stat-card"><span class="num" id="following">0</span><span class="lab">متابَع</span></div>
-            <div class="stat-card"><span class="num" id="fans">0</span><span class="lab">متابِع</span></div>
-            <div class="stat-card"><span class="num" id="likes">0</span><span class="lab">إعجابات</span></div>
-            <div class="stat-card"><span class="num" id="videos">0</span><span class="lab">فيديوهات</span></div>
-        </div>
-        <div class="extra" id="extraInfo">
-            <div><span>🆔 المعرف الفريد:</span> <span id="userId">—</span></div>
-            <div><span>📝 البايو:</span> <span id="bio">—</span></div>
-            <div><span>🔗 الرابط:</span> <span id="link">—</span></div>
-            <div><span>🌐 المنطقة:</span> <span id="region">—</span></div>
-            <div><span>📅 تاريخ الانضمام:</span> <span id="joinDate">—</span></div>
-            <div><span>📺 البثوث المباشرة:</span> <span id="liveCount">—</span></div>
-            <div><span>✅ موثّق:</span> <span id="verified">—</span></div>
-            <div><span>👤 خاص:</span> <span id="private">—</span></div>
-        </div>
+
+    <label>💬 نص الرسالة</label>
+    <textarea id="msg" placeholder="اكتب رسالتك هنا...">@here تم الإرسال ⚡</textarea>
+
+    <details>
+      <summary>🖼️ إضافة صورة / إيمبد (اختياري)</summary>
+      <label>رابط الصورة (تظهر داخل الرسالة)</label>
+      <input id="img" placeholder="https://example.com/image.png">
+      <label>عنوان الإيمبد (Embed Title)</label>
+      <input id="etitle" placeholder="عنوان الإيمبد">
+      <label>وصف الإيمبد</label>
+      <textarea id="edesc" placeholder="وصف الإيمبد"></textarea>
+      <label>لون الإيمبد (HEX)</label>
+      <input id="ecolor" type="color" value="#7b5cff">
+    </details>
+
+    <button class="send" id="btn" onclick="start()">🚀 ابدأ الإرسال</button>
+    <button class="stop" id="stopBtn" onclick="stop()">⏹️ إيقاف</button>
+
+    <div class="stats">
+      <div class="stat"><b id="sSent">0</b><span>أُرسلت</span></div>
+      <div class="stat"><b id="sFail">0</b><span>فشلت</span></div>
+      <div class="stat"><b id="sTotal">0</b><span>الإجمالي</span></div>
     </div>
-    <div class="footer">© 2026 - صيد-معلومات-يوزر-تيك</div>
+    <div id="log"></div>
+  </div>
 </div>
+
 <script>
-    (() => {
-        const usernameInput = document.getElementById('username');
-        const fetchBtn = document.getElementById('fetchBtn');
-        const statusMsg = document.getElementById('statusMsg');
-        const resultBox = document.getElementById('resultBox');
-        const avatar = document.getElementById('avatar');
-        const displayName = document.getElementById('displayName');
-        const uniqueId = document.getElementById('uniqueId');
-        const following = document.getElementById('following');
-        const fans = document.getElementById('fans');
-        const likes = document.getElementById('likes');
-        const videos = document.getElementById('videos');
-        const userId = document.getElementById('userId');
-        const bio = document.getElementById('bio');
-        const link = document.getElementById('link');
-        const region = document.getElementById('region');
-        const joinDate = document.getElementById('joinDate');
-        const liveCount = document.getElementById('liveCount');
-        const verified = document.getElementById('verified');
-        const privateAcc = document.getElementById('private');
+let running = false;
 
-        const fetchUser = async (username) => {
-            const clean = username.replace(/^@/, '').trim();
-            if (!clean) throw new Error('اسم المستخدم فارغ');
-            const url = `https://www.tikwm.com/api/user?unique_id=${encodeURIComponent(clean)}`;
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error(`فشل الاتصال: ${resp.status}`);
-            const data = await resp.json();
-            if (data.code !== 0) throw new Error(data.msg || 'المستخدم غير موجود');
-            if (!data.data || !data.data.uid) throw new Error('بيانات غير مكتملة');
-            return data.data;
-        };
+function log(txt, cls) {
+  const l = document.getElementById('log');
+  const d = document.createElement('div');
+  d.className = cls || '';
+  d.textContent = txt;
+  l.prepend(d);
+}
 
-        const displayData = (data) => {
-            avatar.src = data.avatar || '';
-            displayName.textContent = data.nickname || '—';
-            uniqueId.textContent = `@${data.unique_id || ''}`;
-            following.textContent = data.following_count || 0;
-            fans.textContent = data.follower_count || 0;
-            likes.textContent = data.heart_count || 0;
-            videos.textContent = data.video_count || 0;
-            userId.textContent = data.uid || '—';
-            bio.textContent = data.signature || '—';
-            link.textContent = data.link || '—';
-            region.textContent = data.region || '—';
-            joinDate.textContent = data.create_time ? new Date(data.create_time * 1000).toLocaleDateString('ar-EG') : '—';
-            liveCount.textContent = data.live_count || 'غير متاح';
-            verified.textContent = data.verified ? '✅ نعم' : '❌ لا';
-            privateAcc.textContent = data.private ? '🔒 نعم' : '🔓 لا';
-            resultBox.classList.add('show');
-        };
+function buildPayload(msg) {
+  const p = { content: msg };
+  const img = document.getElementById('img').value.trim();
+  const title = document.getElementById('etitle').value.trim();
+  const desc = document.getElementById('edesc').value.trim();
+  if (img) p.image = { url: img };
+  if (title || desc) {
+    const color = parseInt(document.getElementById('ecolor').value.slice(1), 16);
+    p.embeds = [{ title, description: desc, color }];
+  }
+  return p;
+}
 
-        const handle = async () => {
-            const username = usernameInput.value.trim();
-            if (!username) {
-                statusMsg.textContent = '⚠️ أدخل اسم المستخدم';
-                statusMsg.style.color = '#ffa500';
-                return;
-            }
-            fetchBtn.disabled = true;
-            fetchBtn.textContent = '⏳ جاري...';
-            statusMsg.textContent = '🔄 جلب البيانات...';
-            statusMsg.style.color = '#00d4ff';
-            resultBox.classList.remove('show');
-            try {
-                const data = await fetchUser(username);
-                displayData(data);
-                statusMsg.textContent = '✅ تم جلب كل المعلومات بنجاح';
-                statusMsg.style.color = '#0f0';
-            } catch (err) {
-                statusMsg.textContent = `❌ ${err.message}`;
-                statusMsg.style.color = '#ff4444';
-                resultBox.classList.remove('show');
-            }
-            fetchBtn.disabled = false;
-            fetchBtn.textContent = '🚀 تفعيل';
-        };
+async function sendOne(url, payload) {
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    return r.status === 204 || r.ok;
+  } catch (e) { return false; }
+}
 
-        fetchBtn.addEventListener('click', handle);
-        usernameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') handle(); });
-    })();
+async function start() {
+  const url = document.getElementById('url').value.trim();
+  const count = parseInt(document.getElementById('count').value) || 1;
+  const delay = (parseFloat(document.getElementById('delay').value) || 0) * 1000;
+  const msg = document.getElementById('msg').value;
+  const payload = buildPayload(msg);
+
+  if (!url.startsWith('https://')) return log('❌ ضع رابط ويبهوك صحيح', 'err');
+
+  running = true;
+  document.getElementById('btn').style.display = 'none';
+  document.getElementById('stopBtn').style.display = 'block';
+  document.getElementById('sTotal').textContent = count;
+
+  for (let i = 1; i <= count && running; i++) {
+    const ok = await sendOne(url, payload);
+    if (ok) {
+      document.getElementById('sSent').textContent = i;
+      log(`✔ [${i}/${count}] تم الإرسال`, 'ok');
+    } else {
+      document.getElementById('sFail').textContent =
+        parseInt(document.getElementById('sFail').textContent) + 1;
+      log(`✖ [${i}/${count}] فشل (ربما Rate Limit)`, 'err');
+    }
+    if (delay > 0 && i < count) await new Promise(r => setTimeout(r, delay));
+  }
+
+  running = false;
+  log('🏁 انتهى', 'ok');
+  document.getElementById('btn').style.display = 'block';
+  document.getElementById('stopBtn').style.display = 'none';
+}
+
+function stop() { running = false; log('⏹ تم الإيقاف يدوياً', 'err'); }
 </script>
 </body>
 </html>
