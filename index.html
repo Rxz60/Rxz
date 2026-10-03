@@ -14,7 +14,7 @@
     <link rel="shortcut icon" type="image/png" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
     <link rel="apple-touch-icon" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
 
-    <!-- صوت الضغط -->
+ 
     <link rel="preload" as="audio" href="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3">
 
     <style>
@@ -62,7 +62,7 @@
             animation: dance 2.5s infinite ease-in-out;
         }
 
-        /* 🌫️ تأثير التشويش الزجاجي الأبيض الفخم خلف النصوص */
+     
         .glass-box {
             background: var(--glass-bg) !important;
             backdrop-filter: blur(15px) saturate(180%);
@@ -71,7 +71,7 @@
             box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.15);
         }
 
-        /* شاشة الدخول */
+    
         .splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.85);
@@ -123,7 +123,7 @@
 
         .skip-splash-btn:hover { background: #ffffff; color: #000000; }
 
-        /* الشريط العلوي */
+       
         .top-black-bar {
             width: 100%; 
             background: rgba(0, 0, 0, 0.7);
@@ -143,7 +143,7 @@
 
         .main-content-wrapper.enter-active { opacity: 1; transform: translateY(0); }
 
-        /* زر القائمة الجانبية */
+     
         .top-right-menu-btn {
             position: absolute; top: 50px; right: 15px;
             display: flex; align-items: center; gap: 8px; cursor: pointer;
@@ -186,7 +186,7 @@
         .container { max-width: 850px; margin: 0 auto; padding: 10px 20px 50px; }
         .main-menu-grid { display: flex; flex-direction: column; gap: 20px; }
 
-        /* الكروت */
+      
         .menu-box-trigger {
             border-radius: 22px; padding: 24px 30px; cursor: pointer; transition: 0.3s ease;
             background: var(--glass-bg);
@@ -285,7 +285,7 @@
         .discord-icon-img { width: 24px; height: 24px; fill: #ffffff; transition: 0.2s; }
         .footer-action-btn:hover .discord-icon-img { fill: #000000; }
 
-        /* القائمة الجانبية */
+        
         .side-drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(12px);
@@ -331,7 +331,7 @@
     <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3" type="audio/mp3">
 </audio>
 
-<!-- شاشة الدخول -->
+
 <div id="splashScreen" class="splash-screen">
     <img src="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png" class="splash-img-square" alt="MRX Logo">
     
@@ -353,7 +353,7 @@
 
 <div id="mainContentWrapper" class="main-content-wrapper">
 
-    <!-- زر فتح القائمة الجانبية -->
+    
     <div class="top-right-menu-btn" onclick="playClickSound(); document.getElementById('side-drawer').classList.toggle('open')">
         <div class="menu-bars-icon">
             <span></span>
@@ -373,8 +373,8 @@
     </header>
 
     <div class="container">
+
         
-        <!-- القائمة الرئيسية -->
         <div id="main-menu-page" class="main-menu-grid">
             <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-ios');">
                 <h2>هاكات ايفون + iOS</h2>
@@ -390,7 +390,7 @@
             </div>
         </div>
 
-        <!-- قسم الايفون -->
+      
         <div id="page-ios" class="sub-page">
             <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
             <div class="section-title-white">قائمة الايفون (iOS)</div>
@@ -412,7 +412,7 @@
             </div>
         </div>
 
-        <!-- قسم الاندرويد -->
+
         <div id="page-android" class="sub-page">
             <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
             <div class="section-title-white">قائمة الاندرويد (Android)</div>
@@ -496,7 +496,7 @@
             </div>
         </div>
 
-        <!-- قسم البي سي -->
+
         <div id="page-pc" class="sub-page">
             <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
             <div class="section-title-white">قائمة البي سي (PC)</div>
@@ -546,7 +546,7 @@
     </div>
 </div>
 
-<!-- القائمة الجانبية -->
+
 <div id="side-drawer" class="side-drawer-overlay" onclick="if(event.target.id==='side-drawer') { playClickSound(); this.classList.remove('open'); }">
     <div class="side-drawer-container">
         <button class="drawer-close-btn" onclick="playClickSound(); document.getElementById('side-drawer').classList.remove('open')">✕</button>
