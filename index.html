@@ -3,213 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRX App | TRX Team</title>
+    <title>MRX App</title>
+
     <meta property="og:title" content="MRX">
-    <meta property="og:description" content="موقع MRX الفخم">
+    <meta property="og:description" content="موقع MRX">
     <meta property="og:image" content="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
-    
+    <meta property="og:type" content="website">
+
+    <link rel="icon" type="image/png" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
+    <link rel="shortcut icon" type="image/png" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
+    <link rel="apple-touch-icon" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
+
+    <!-- صوت الضغط -->
+    <link rel="preload" as="audio" href="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3">
+
     <style>
         :root {
-            --bg-dark: #050505;
+            --bg-dark: #000000;
+            --white-glow: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.25);
             --text-color: #ffffff;
-            --blur-white-bg: rgba(255, 255, 255, 0.08);
-            --blur-white-border: rgba(255, 255, 255, 0.25);
-            --glow-white: rgba(255, 255, 255, 0.35);
         }
 
         * { 
             box-sizing: border-box; 
             -webkit-user-select: none !important; 
             user-select: none !important; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            -webkit-touch-callout: none !important; 
+            -webkit-tap-highlight-color: transparent !important;
+            font-family: 'Segoe UI', Roboto, sans-serif; 
         }
 
         body {
             background-color: var(--bg-dark);
+            background-image: url("https://github.com/Rxz60/SAP/raw/refs/heads/main/928CC517-5CEA-4B87-8D78-F272FA71091D.gif");
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
             color: var(--text-color); 
-            margin: 0; 
-            padding: 0; 
+            margin: 0; padding: 0; 
             min-height: 100vh; 
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+            perspective: 2000px;
         }
 
-        /* تأثير ضبابي أبيض خلف النصوص العناوين */
-        .blurred-text-box {
-            background: var(--blur-white-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--blur-white-border);
-            border-radius: 16px;
-            padding: 12px 24px;
-            display: inline-block;
-            box-shadow: 0 0 20px var(--glow-white);
+        /* 🕺 أنيميشن الرقص لكل الصور */
+        @keyframes dance {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            25% { transform: translateY(-6px) rotate(-3deg) scale(1.03); }
+            50% { transform: translateY(0) rotate(0deg) scale(1); }
+            75% { transform: translateY(-6px) rotate(3deg) scale(1.03); }
+            100% { transform: translateY(0) rotate(0deg) scale(1); }
         }
 
-        /* الشاشة الافتتاحية */
+        img {
+            animation: dance 2.5s infinite ease-in-out;
+        }
+
+        /* 🌫️ تأثير التشويش الزجاجي الأبيض الفخم خلف النصوص */
+        .glass-box {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border) !important;
+            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        /* شاشة الدخول */
         .splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000000; z-index: 200000;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 2000000;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 20px; transition: opacity 0.6s ease, visibility 0.6s;
+            padding: 20px;
+            transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s;
         }
 
         .splash-screen.hide {
-            opacity: 0; visibility: hidden; pointer-events: none;
+            opacity: 0; transform: scale(1.05); visibility: hidden; pointer-events: none;
         }
 
-        .splash-img {
-            width: 120px; height: 120px; border-radius: 20px;
-            border: 2px solid #ffffff; box-shadow: 0 0 30px var(--glow-white);
-            object-fit: cover; margin-bottom: 25px;
+        .splash-img-square {
+            width: 140px; height: 140px; border-radius: 24px;
+            border: 2px solid #ffffff; box-shadow: 0 0 35px var(--white-glow);
+            object-fit: cover; margin-bottom: 30px;
         }
 
-        .enter-btn {
-            padding: 14px 40px; background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ffffff; border-radius: 14px; color: #ffffff;
-            font-size: 18px; font-weight: bold; cursor: pointer;
-            backdrop-filter: blur(10px); box-shadow: 0 0 15px var(--glow-white);
-            transition: 0.3s ease;
+        .splash-buttons-container {
+            display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 300px;
         }
 
-        .enter-btn:hover {
-            background: #ffffff; color: #000000; box-shadow: 0 0 30px #ffffff;
-        }
-
-        /* شريط علوي */
-        .top-bar {
-            width: 100%; background: rgba(0, 0, 0, 0.8);
-            border-bottom: 1px solid var(--blur-white-border);
-            padding: 15px; text-align: center; font-size: 22px; font-weight: bold;
-            backdrop-filter: blur(10px);
-        }
-
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-
-        /* قسم الفريق بالبداية */
-        .team-section {
-            margin-bottom: 35px; text-align: center;
-        }
-
-        .team-card {
-            background: var(--blur-white-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--blur-white-border);
-            border-radius: 20px; padding: 20px;
-            max-width: 320px; margin: 20px auto;
-            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.1);
-            text-align: center; position: relative;
-        }
-
-        .profile-img-wrap {
-            position: relative; width: 90px; height: 90px; margin: 0 auto 12px;
-        }
-
-        .profile-img {
-            width: 100%; height: 100%; border-radius: 50%;
-            object-fit: cover; border: 2px solid #ffffff;
-            box-shadow: 0 0 15px var(--glow-white);
-        }
-
-        .online-dot {
-            position: absolute; bottom: 4px; right: 4px;
-            width: 16px; height: 16px; background: #22c55e;
-            border-radius: 50%; border: 2px solid #000000;
-        }
-
-        .discord-link-icon {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #ffffff; border-radius: 10px; margin-top: 10px;
-            color: #ffffff; text-decoration: none; transition: 0.3s;
-        }
-
-        .discord-link-icon:hover { background: #ffffff; color: #000; }
-
-        /* القائمة الرئيسية للهاكات */
-        .main-menu-grid { display: flex; flex-direction: column; gap: 18px; }
-
-        .menu-box-trigger {
-            background: var(--blur-white-bg);
+        .enter-btn-box, .custom-style-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px 28px;
+            background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            border: 1px solid var(--blur-white-border);
-            border-radius: 18px; padding: 20px 25px;
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; transition: 0.3s;
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid var(--glass-border); border-radius: 18px; color: #ffffff;
+            font-size: 18px; font-weight: 900; cursor: pointer; text-decoration: none;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); transition: 0.3s ease; width: 100%;
         }
 
-        .menu-box-trigger:hover {
-            border-color: #ffffff; background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 25px var(--glow-white); transform: translateY(-2px);
+        .enter-btn-box:hover, .custom-style-btn:hover {
+            background: rgba(255, 255, 255, 0.25); color: #ffffff; box-shadow: 0 0 35px #ffffff; transform: scale(1.03);
+        }
+
+        .skip-splash-btn {
+            position: fixed; bottom: 25px; right: 25px; z-index: 2000001;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); color: #ffffff;
+            padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer;
+            box-shadow: 0 0 15px var(--white-glow); transition: 0.2s;
+        }
+
+        .skip-splash-btn:hover { background: #ffffff; color: #000000; }
+
+        /* الشريط العلوي */
+        .top-black-bar {
+            width: 100%; 
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: #ffffff; text-align: center;
+            padding: 14px 0; font-size: 26px; font-weight: 900; letter-spacing: 4px;
+            border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--white-glow);
+            position: relative; z-index: 50; text-shadow: 0 0 15px #ffffff;
+        }
+
+        .main-content-wrapper { 
+            position: relative; z-index: 10; opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .main-content-wrapper.enter-active { opacity: 1; transform: translateY(0); }
+
+        /* زر القائمة الجانبية */
+        .top-right-menu-btn {
+            position: absolute; top: 50px; right: 15px;
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            z-index: 100; padding: 10px; background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid var(--glass-border);
+        }
+
+        .menu-bars-icon { display: flex; flex-direction: column; gap: 5px; }
+        .menu-bars-icon span {
+            display: block; width: 24px; height: 3px; background-color: #ffffff;
+            border-radius: 3px; box-shadow: 0 0 10px #ffffff;
+        }
+
+        header { padding: 25px 0 15px; text-align: center; }
+        
+        .logo-img-container {
+            width: 110px; height: 110px; border-radius: 22px; 
+            border: 2px solid #ffffff; box-shadow: 0 0 35px var(--white-glow); 
+            margin: 0 auto 15px; background: rgba(0,0,0,0.5); overflow: hidden;
+        }
+        .logo-img { width: 100%; height: 100%; object-fit: cover; }
+
+        .title-bar-no-border h1 { 
+            font-size: 38px; margin: 0; font-weight: 900; color: #ffffff; 
+            text-shadow: 0 0 25px #ffffff; letter-spacing: 4px; 
+            display: inline-block;
+            padding: 5px 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .square-hack-img {
+            width: 110px; height: 110px; border-radius: 18px; object-fit: cover;
+            margin: 0 auto 15px; background-color: #000000; border: 2px solid #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8); display: block;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; padding: 10px 20px 50px; }
+        .main-menu-grid { display: flex; flex-direction: column; gap: 20px; }
+
+        /* الكروت */
+        .menu-box-trigger {
+            border-radius: 22px; padding: 24px 30px; cursor: pointer; transition: 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1.5px solid var(--glass-border); 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.15);
+            display: flex; align-items: center; justify-content: space-between; gap: 20px;
+            text-decoration: none;
+        }
+
+        .menu-box-trigger:hover { 
+            background: rgba(255, 255, 255, 0.18);
+            border-color: #ffffff; box-shadow: 0 0 40px #ffffff; transform: translateY(-3px); 
+        }
+        .menu-box-trigger h2 { 
+            margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; text-shadow: 0 0 18px #ffffff; 
         }
 
         .menu-box-img {
-            width: 65px; height: 65px; border-radius: 12px;
-            border: 1px solid #ffffff; object-fit: cover;
+            width: 80px; height: 80px; min-width: 80px; border-radius: 18px; object-fit: cover;
+            background-color: #000000; padding: 2px; border: 2px solid #ffffff;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); display: block;
         }
 
-        /* صفحات الهاكات الفرعية */
-        .sub-page { display: none; }
-
-        .back-btn {
-            background: var(--blur-white-bg); border: 1px solid #ffffff;
-            color: #fff; padding: 10px 20px; border-radius: 10px;
-            cursor: pointer; font-weight: bold; margin-bottom: 20px;
-            backdrop-filter: blur(10px); transition: 0.2s;
+        .sub-page { display: none; background: transparent; animation: fadeEffect 0.3s ease forwards; }
+        @keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-title-white { 
+            font-size: 26px; font-weight: 900; color: #ffffff; margin-bottom: 25px; text-align: center; text-shadow: 0 0 18px #ffffff;
+            padding: 10px; border-radius: 15px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid var(--glass-border);
         }
-
-        .back-btn:hover { background: #ffffff; color: #000; }
-
-        .cards-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
+        
+        .cards-grid { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; 
         }
 
         .hack-card {
-            background: var(--blur-white-bg);
+            background: var(--glass-bg);
             backdrop-filter: blur(15px);
-            border: 1px solid var(--blur-white-border);
-            border-radius: 18px; padding: 18px; text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1.5px solid var(--glass-border); border-radius: 22px;
+            padding: 22px; text-align: center; display: flex; flex-direction: column;
+            justify-content: space-between; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 255, 255, 0.15);
+            transition: 0.3s ease;
         }
 
-        /* انيميشن رقص لصورة الهاك */
-        .square-hack-img {
-            width: 100px; height: 100px; border-radius: 14px;
-            object-fit: cover; margin: 0 auto 12px;
-            border: 2px solid #ffffff; display: block;
-            animation: danceAnimation 2.5s ease-in-out infinite;
+        .hack-card:hover { transform: translateY(-4px); box-shadow: 0 10px 35px #ffffff; background: rgba(255, 255, 255, 0.15); }
+
+        .hack-card h3 { 
+            margin: 8px 0 14px; font-size: 24px; font-weight: 900; color: #ffffff; text-shadow: 0 0 15px #ffffff; 
         }
 
-        @keyframes danceAnimation {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-6px) rotate(-4deg); }
-            50% { transform: translateY(0) rotate(0deg); }
-            75% { transform: translateY(-6px) rotate(4deg); }
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+
+        .dl-link { 
+            display: flex; align-items: center; justify-content: center; gap: 14px;
+            text-decoration: none; 
+            background: rgba(0, 0, 0, 0.5); 
+            backdrop-filter: blur(10px);
+            color: #ffffff; padding: 12px 18px; 
+            border-radius: 16px; font-weight: 900; font-size: 17px; border: 1px solid var(--glass-border); 
+            transition: 0.2s ease; cursor: pointer;
+        }
+        .dl-link:hover { 
+            background: #ffffff; color: #000000; box-shadow: 0 0 25px #ffffff;
         }
 
-        .dl-link {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            text-decoration: none; background: rgba(0, 0, 0, 0.6); color: #fff;
-            padding: 10px; border-radius: 12px; border: 1px solid var(--blur-white-border);
-            margin-top: 10px; font-weight: bold; transition: 0.3s;
+        .dl-icon-img {
+            width: 42px; height: 42px; object-fit: cover; border-radius: 10px;
+            border: 1.5px solid #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
         }
 
-        .dl-link:hover {
-            background: #ffffff; color: #000; border-color: #ffffff;
-            box-shadow: 0 0 15px #ffffff;
+        .back-btn { 
+            display: inline-block; margin-bottom: 20px; 
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            color: #ffffff; padding: 10px 24px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 16px;
+            transition: 0.2s; border: 1.5px solid var(--glass-border); box-shadow: 0 0 15px var(--white-glow);
+        }
+        .back-btn:hover { background: #ffffff; color: #000000; box-shadow: 0 0 25px #ffffff; }
+
+        .footer-buttons-wrapper { 
+            display: flex; flex-direction: column; gap: 12px; align-items: center;
+            margin: 35px 0 15px; position: relative; z-index: 20; 
         }
 
-        .dl-icon-img { width: 30px; height: 30px; border-radius: 6px; }
+        .footer-action-btn { 
+            display: inline-flex; align-items: center; justify-content: center; gap: 12px; 
+            background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid var(--glass-border); color: #ffffff; 
+            padding: 16px 28px; border-radius: 16px; font-size: 16px; font-weight: 900; 
+            text-decoration: none; transition: 0.2s; box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2); 
+            width: 100%; max-width: 320px;
+        }
+        .footer-action-btn:hover { background: #ffffff; color: #000000; box-shadow: 0 0 35px #ffffff; }
+        .discord-icon-img { width: 24px; height: 24px; fill: #ffffff; transition: 0.2s; }
+        .footer-action-btn:hover .discord-icon-img { fill: #000000; }
 
-        .footer-btn {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: var(--blur-white-bg); border: 1px solid #ffffff; color: #fff;
-            padding: 14px; border-radius: 14px; text-decoration: none; font-weight: bold;
-            margin: 30px auto 10px; max-width: 300px; backdrop-filter: blur(10px);
-            transition: 0.3s;
+        /* القائمة الجانبية */
+        .side-drawer-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(12px);
+            z-index: 200000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
         }
 
-        .footer-btn:hover { background: #ffffff; color: #000; }
+        .side-drawer-overlay.open { opacity: 1; visibility: visible; }
+
+        .side-drawer-container { 
+            position: fixed; top: 0; right: -320px; width: 280px; max-width: 85%; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px);
+            border-left: 1.5px solid var(--glass-border); padding: 25px 20px; 
+            box-shadow: -5px 0 35px rgba(255, 255, 255, 0.2); z-index: 200001; 
+            transition: right 0.3s ease;
+            display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+        }
+
+        .side-drawer-overlay.open .side-drawer-container { right: 0; }
+
+        .drawer-close-btn {
+            align-self: flex-start; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1.5px solid var(--glass-border);
+            color: #ffffff; font-size: 20px; font-weight: 900; width: 38px; height: 38px;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s; margin-bottom: 15px;
+        }
+
+        .drawer-close-btn:hover { background: #ffffff; color: #000000; }
+
+        .drawer-item { 
+            background: var(--glass-bg); backdrop-filter: blur(10px); color: #ffffff; padding: 14px 16px; border-radius: 12px; 
+            text-align: center; font-size: 15px; font-weight: 900; cursor: pointer; 
+            text-decoration: none; transition: 0.2s; border: 1.5px solid var(--glass-border); 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .drawer-item:hover { background: #ffffff; color: #000000; box-shadow: 0 0 25px #ffffff; }
+        .drawer-item:hover .discord-icon-img { fill: #000000; }
     </style>
 </head>
 <body>
@@ -218,201 +331,243 @@
     <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3" type="audio/mp3">
 </audio>
 
-<!-- شاشة البداية بدون زر تحميل الموقع -->
+<!-- شاشة الدخول -->
 <div id="splashScreen" class="splash-screen">
-    <img src="https://avatar-discord.vercel.app/api/pfp/1446138117076553824/image" class="splash-img" alt="Logo">
-    <button class="enter-btn" onclick="enterSite()">دخول الموقع</button>
+    <img src="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png" class="splash-img-square" alt="MRX Logo">
+    
+    <div class="splash-buttons-container">
+        <button class="enter-btn-box" onclick="enterSiteProcess()">اضغط للبدء</button>
+
+        <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="custom-style-btn">
+            <svg class="discord-icon-img" viewBox="0 0 127.14 96.36">
+                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74C48.8,40.21,53.9,45.92,53.8,53,53.8,60,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74C91,40.21,96.13,45.92,96,53,96,60,90.95,65.69,84.69,65.69Z"/>
+            </svg>
+            <span>ديسكورد MRX</span>
+        </a>
+    </div>
 </div>
 
-<div class="top-bar">MRX HUB</div>
+<button id="skipSplashBtn" class="skip-splash-btn" onclick="enterSiteProcess()">تخطي ←</button>
 
-<div class="container">
+<div class="top-black-bar">MRX</div>
 
-    <!-- قسم الفريق بالبداية -->
-    <div class="team-section">
-        <div class="blurred-text-box">
-            <h2 style="margin:0; font-size: 20px;">فريق العمل</h2>
+<div id="mainContentWrapper" class="main-content-wrapper">
+
+    <!-- زر فتح القائمة الجانبية -->
+    <div class="top-right-menu-btn" onclick="playClickSound(); document.getElementById('side-drawer').classList.toggle('open')">
+        <div class="menu-bars-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo-img-container">
+            <img src="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png" class="logo-img" alt="MRX Logo">
+        </div>
+        
+        <div class="title-bar-no-border">
+            <h1>MRX</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- القائمة الرئيسية -->
+        <div id="main-menu-page" class="main-menu-grid">
+            <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-ios');">
+                <h2>هاكات ايفون + iOS</h2>
+                <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5008.jpeg" class="menu-box-img" alt="iOS Icon">
+            </div>
+            <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-android');">
+                <h2>هاكات أندرويد + Android</h2>
+                <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5006.jpeg" class="menu-box-img" alt="Android Icon">
+            </div>
+            <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-pc');">
+                <h2>هاكات بي سي + PC</h2>
+                <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5007.jpeg" class="menu-box-img" alt="PC Icon">
+            </div>
         </div>
 
-        <div class="team-card">
-            <div class="profile-img-wrap">
-                <img src="https://avatar-discord.vercel.app/api/pfp/1446138117076553824/image" class="profile-img" alt="trx_">
-                <span class="online-dot"></span>
+        <!-- قسم الايفون -->
+        <div id="page-ios" class="sub-page">
+            <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
+            <div class="section-title-white">قائمة الايفون (iOS)</div>
+            <div class="cards-grid">
+                <div class="hack-card">
+                    <img src="https://raw.githubusercontent.com/hatm12345cc-source/VN7/refs/heads/main/IMG_1929.png" class="square-hack-img">
+                    <h3>Delta</h3>
+                    <div class="btn-group">
+                        <a href="itms-services://?action=download-manifest&url=https://delta.bz/manifest.plist" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Delta</span>
+                        </a>
+                        <a href="https://nekoo.eu.org/mnzdiQ" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Delta VN</span>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <h3 style="margin: 5px 0; font-size: 22px;">trx_</h3>
-            <p style="margin: 0; opacity: 0.7; font-size: 14px;">Owner & Developer</p>
-            
-            <!-- علامة صغيرة تنقل لحسابك -->
-            <a href="https://discord.com/users/1446138117076553824" target="_blank" onclick="playClickSound();" class="discord-link-icon" title="Discord Profile">
-                <svg width="20" height="20" viewBox="0 0 127.14 96.36" fill="currentColor">
+        </div>
+
+        <!-- قسم الاندرويد -->
+        <div id="page-android" class="sub-page">
+            <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
+            <div class="section-title-white">قائمة الاندرويد (Android)</div>
+            <div class="cards-grid">
+                <div class="hack-card">
+                    <img src="https://raw.githubusercontent.com/hatm12345cc-source/VN7/refs/heads/main/IMG_1929.png" class="square-hack-img">
+                    <h3>Delta</h3>
+                    <div class="btn-group">
+                        <a href="https://files.catbox.moe/6kqc4y.apk" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Delta</span>
+                        </a>
+                        <a href="https://www.mediafire.com/file/5pvz0fjuaudojmd/Delta+VN+New.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Delta VN</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2577.jpeg" class="square-hack-img">
+                    <h3>Arceus X</h3>
+                    <div class="btn-group">
+                        <a href="https://www.mediafire.com/file/dlypi7n7b8azy74/Roblox.Arceus.X.NEO.2.2.7.apk.download/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Arceus Neo</span>
+                        </a>
+                        <a href="https://vng.spdmteam.com/" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Arceus VN</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2609.jpeg" class="square-hack-img">
+                    <h3>PunkX</h3>
+                    <div class="btn-group">
+                        <a href="https://www.mediafire.com/file/4cz0juuzjfyqqm4/PunkX_64Bits.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install PunkX Original</span>
+                        </a>
+                        <a href="https://www.mediafire.com/file/tafzvqylpjzp4go/PunkX_VNG_64Bits.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install PunkX VNG</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2580.jpeg" class="square-hack-img">
+                    <h3>Codex</h3>
+                    <div class="btn-group">
+                        <a href="https://www.mediafire.com/file/9qz50mqeizkgkww/Codex+v2.729.840.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Codex Global</span>
+                        </a>
+                        <a href="https://www.mediafire.com/file/5p08n8qhtsv4x3s/Codex+VNG+V2.715+No+Key.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Codex VN</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://github.com/Rxz60/TRX5/raw/refs/heads/main/4865B4C0-8AD9-44E7-AEF1-93DFA9FFE555.png" class="square-hack-img">
+                    <h3>VegaX</h3>
+                    <div class="btn-group">
+                        <a href="https://github.com/1f0yt/community/releases/download/Vegax/Vega.X.apk" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install VegaX</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/A590D67D-235D-4C31-8606-59127F58FF03.png" class="square-hack-img">
+                    <h3>Trigon</h3>
+                    <div class="btn-group">
+                        <a href="https://www.mediafire.com/file/1p5mhe2y2hh97z1/2.726.1142_trigon.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Trigon</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم البي سي -->
+        <div id="page-pc" class="sub-page">
+            <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
+            <div class="section-title-white">قائمة البي سي (PC)</div>
+            <div class="cards-grid">
+                <div class="hack-card">
+                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/heads/main/IMG_2612.jpeg" class="square-hack-img">
+                    <h3>Velocity</h3>
+                    <div class="btn-group">
+                        <a href="https://gofile.io/d/biQGwp" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Velocity</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/A590D67D-235D-4C31-8606-59127F58FF03.png" class="square-hack-img">
+                    <h3>Trigon</h3>
+                    <div class="btn-group">
+                        <a href="https://www.mediafire.com/file/jwmwp9xhriyqkql/Trigon_Evo_0.2.6.exe/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Trigon PC</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="hack-card">
+                    <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/8EDAC7FF-974A-4351-8F15-8C2592B06CF4.png" class="square-hack-img">
+                    <h3>Xeno</h3>
+                    <div class="btn-group">
+                        <a href="https://www.mediafire.com/file/e2kjxf028x107uk/Xeno-v1.3.55.exe/file" target="_blank" onclick="playClickSound();" class="dl-link">
+                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
+                            <span>Install Xeno</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-buttons-wrapper">
+            <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="footer-action-btn">
+                <svg class="discord-icon-img" viewBox="0 0 127.14 96.36">
                     <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74C48.8,40.21,53.9,45.92,53.8,53,53.8,60,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74C91,40.21,96.13,45.92,96,53,96,60,90.95,65.69,84.69,65.69Z"/>
                 </svg>
+                <span>انضم للديسكورد</span>
             </a>
         </div>
+
     </div>
+</div>
 
-    <!-- القائمة الرئيسية -->
-    <div id="main-menu-page" class="main-menu-grid">
-        <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-ios');">
-            <div class="blurred-text-box"><h2>هاكات ايفون + iOS</h2></div>
-            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5008.jpeg" class="menu-box-img">
-        </div>
-        <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-android');">
-            <div class="blurred-text-box"><h2>هاكات أندرويد + Android</h2></div>
-            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5006.jpeg" class="menu-box-img">
-        </div>
-        <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-pc');">
-            <div class="blurred-text-box"><h2>هاكات بي سي + PC</h2></div>
-            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5007.jpeg" class="menu-box-img">
-        </div>
+<!-- القائمة الجانبية -->
+<div id="side-drawer" class="side-drawer-overlay" onclick="if(event.target.id==='side-drawer') { playClickSound(); this.classList.remove('open'); }">
+    <div class="side-drawer-container">
+        <button class="drawer-close-btn" onclick="playClickSound(); document.getElementById('side-drawer').classList.remove('open')">✕</button>
+        
+        <div class="drawer-item" onclick="playClickSound(); showMainMenu(); document.getElementById('side-drawer').classList.remove('open');">الصفحة الرئيسية</div>
+        <div class="drawer-item" onclick="playClickSound(); openSection('page-ios'); document.getElementById('side-drawer').classList.remove('open');">قائمة الايفون (iOS)</div>
+        <div class="drawer-item" onclick="playClickSound(); openSection('page-android'); document.getElementById('side-drawer').classList.remove('open');">قائمة الاندرويد (Android)</div>
+        <div class="drawer-item" onclick="playClickSound(); openSection('page-pc'); document.getElementById('side-drawer').classList.remove('open');">قائمة البي سي (PC)</div>
+
+        <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="drawer-item">
+            <svg class="discord-icon-img" viewBox="0 0 127.14 96.36">
+                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74C48.8,40.21,53.9,45.92,53.8,53,53.8,60,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74C91,40.21,96.13,45.92,96,53,96,60,90.95,65.69,84.69,65.69Z"/>
+            </svg>
+            <span>ديسكورد MRX</span>
+        </a>
     </div>
-
-    <!-- قسم iOS -->
-    <div id="page-ios" class="sub-page">
-        <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div class="blurred-text-box"><h2 style="margin: 0;">قائمة الايفون (iOS)</h2></div>
-        </div>
-        <div class="cards-grid">
-            <div class="hack-card">
-                <img src="https://raw.githubusercontent.com/hatm12345cc-source/VN7/refs/heads/main/IMG_1929.png" class="square-hack-img">
-                <h3>Delta</h3>
-                <a href="itms-services://?action=download-manifest&url=https://delta.bz/manifest.plist" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Delta</span>
-                </a>
-                <a href="https://nekoo.eu.org/mnzdiQ" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Delta VN</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- قسم Android -->
-    <div id="page-android" class="sub-page">
-        <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div class="blurred-text-box"><h2 style="margin: 0;">قائمة الاندرويد (Android)</h2></div>
-        </div>
-        <div class="cards-grid">
-            <div class="hack-card">
-                <img src="https://raw.githubusercontent.com/hatm12345cc-source/VN7/refs/heads/main/IMG_1929.png" class="square-hack-img">
-                <h3>Delta</h3>
-                <a href="https://files.catbox.moe/6kqc4y.apk" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Delta</span>
-                </a>
-                <a href="https://www.mediafire.com/file/5pvz0fjuaudojmd/Delta+VN+New.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Delta VN</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2577.jpeg" class="square-hack-img">
-                <h3>Arceus X</h3>
-                <a href="https://www.mediafire.com/file/dlypi7n7b8azy74/Roblox.Arceus.X.NEO.2.2.7.apk.download/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Arceus Neo</span>
-                </a>
-                <a href="https://vng.spdmteam.com/" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Arceus VN</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2609.jpeg" class="square-hack-img">
-                <h3>PunkX</h3>
-                <a href="https://www.mediafire.com/file/4cz0juuzjfyqqm4/PunkX_64Bits.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install PunkX Original</span>
-                </a>
-                <a href="https://www.mediafire.com/file/tafzvqylpjzp4go/PunkX_VNG_64Bits.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install PunkX VNG</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2580.jpeg" class="square-hack-img">
-                <h3>Codex</h3>
-                <a href="https://www.mediafire.com/file/9qz50mqeizkgkww/Codex+v2.729.840.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Codex Global</span>
-                </a>
-                <a href="https://www.mediafire.com/file/5p08n8qhtsv4x3s/Codex+VNG+V2.715+No+Key.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Codex VN</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://github.com/Rxz60/TRX5/raw/refs/heads/main/4865B4C0-8AD9-44E7-AEF1-93DFA9FFE555.png" class="square-hack-img">
-                <h3>VegaX</h3>
-                <a href="https://github.com/1f0yt/community/releases/download/Vegax/Vega.X.apk" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install VegaX</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/A590D67D-235D-4C31-8606-59127F58FF03.png" class="square-hack-img">
-                <h3>Trigon</h3>
-                <a href="https://www.mediafire.com/file/1p5mhe2y2hh97z1/2.726.1142_trigon.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Trigon</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- قسم PC -->
-    <div id="page-pc" class="sub-page">
-        <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div class="blurred-text-box"><h2 style="margin: 0;">قائمة البي سي (PC)</h2></div>
-        </div>
-        <div class="cards-grid">
-            <div class="hack-card">
-                <img src="https://raw.githubusercontent.com/Rxz60/Rxz/heads/main/IMG_2612.jpeg" class="square-hack-img">
-                <h3>Velocity</h3>
-                <a href="https://gofile.io/d/biQGwp" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Velocity</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/A590D67D-235D-4C31-8606-59127F58FF03.png" class="square-hack-img">
-                <h3>Trigon</h3>
-                <a href="https://www.mediafire.com/file/jwmwp9xhriyqkql/Trigon_Evo_0.2.6.exe/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Trigon PC</span>
-                </a>
-            </div>
-
-            <div class="hack-card">
-                <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/8EDAC7FF-974A-4351-8F15-8C2592B06CF4.png" class="square-hack-img">
-                <h3>Xeno</h3>
-                <a href="https://www.mediafire.com/file/e2kjxf028x107uk/Xeno-v1.3.55.exe/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                    <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                    <span>Install Xeno</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- زر ديسكورد بالأسفل فقط (تم حذف زار تحميل الموقع) -->
-    <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="footer-btn">
-        <span>انضم لـ ديسكورد MRX</span>
-    </a>
-
 </div>
 
 <script>
     document.addEventListener('contextmenu', e => e.preventDefault());
+
     const audio = document.getElementById('bgAudio');
 
     function playClickSound() {
@@ -420,9 +575,14 @@
         audio.play().catch(() => {});
     }
 
-    function enterSite() {
+    function enterSiteProcess() {
         playClickSound();
         document.getElementById('splashScreen').classList.add('hide');
+        document.getElementById('skipSplashBtn').style.display = 'none';
+        
+        setTimeout(() => {
+            document.getElementById('mainContentWrapper').classList.add('enter-active');
+        }, 50);
     }
 
     function openSection(pageId) {
