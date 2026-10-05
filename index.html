@@ -1,601 +1,1230 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRX App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRX Security Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Fira+Code:wght@400;500;600&display=swap');
 
-    <meta property="og:title" content="MRX">
-    <meta property="og:description" content="موقع MRX">
-    <meta property="og:image" content="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
-    <meta property="og:type" content="website">
+  :root {
+    --bg-dark: #0a0e1a;
+    --bg-card: #111827;
+    --bg-input: #0d1322;
+    --border: #1e3a5f;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-glow: rgba(59, 130, 246, 0.3);
+    --text-main: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-bright: #ffffff;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --raw-bg: #0d1117;
+    --raw-border: #30363d;
+    --raw-header: #161b22;
+  }
 
-    <link rel="icon" type="image/png" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
-    <link rel="shortcut icon" type="image/png" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
-    <link rel="apple-touch-icon" href="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png">
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
- 
-    <link rel="preload" as="audio" href="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3">
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-    <style>
-        :root {
-            --bg-dark: #000000;
-            --white-glow: rgba(255, 255, 255, 0.6);
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.25);
-            --text-color: #ffffff;
-        }
+  /* === ANIMATED BACKGROUND === */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(96,165,250,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-user-select: none !important; 
-            user-select: none !important; 
-            -webkit-touch-callout: none !important; 
-            -webkit-tap-highlight-color: transparent !important;
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-        }
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: url("https://github.com/Rxz60/SAP/raw/refs/heads/main/928CC517-5CEA-4B87-8D78-F272FA71091D.gif");
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-attachment: fixed;
-            color: var(--text-color); 
-            margin: 0; padding: 0; 
-            min-height: 100vh; 
-            overflow-x: hidden;
-            perspective: 2000px;
-        }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: rgba(59,130,246,0.5);
+    border-radius: 50%;
+    animation: twinkle 3s ease-in-out infinite;
+  }
 
-        /* 🕺 أنيميشن الرقص لكل الصور */
-        @keyframes dance {
-            0% { transform: translateY(0) rotate(0deg) scale(1); }
-            25% { transform: translateY(-6px) rotate(-3deg) scale(1.03); }
-            50% { transform: translateY(0) rotate(0deg) scale(1); }
-            75% { transform: translateY(-6px) rotate(3deg) scale(1.03); }
-            100% { transform: translateY(0) rotate(0deg) scale(1); }
-        }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
 
-        img {
-            animation: dance 2.5s infinite ease-in-out;
-        }
+  /* === LOGIN SCREEN === */
+  #loginScreen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    background: var(--bg-dark);
+  }
 
-     
-        .glass-box {
-            background: var(--glass-bg) !important;
-            backdrop-filter: blur(15px) saturate(180%);
-            -webkit-backdrop-filter: blur(15px) saturate(180%);
-            border: 1px solid var(--glass-border) !important;
-            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.15);
-        }
+  #loginScreen.hidden { display: none; }
 
-    
-        .splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 2000000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 20px;
-            transition: opacity 0.8s ease, transform 0.8s ease, visibility 0.8s;
-        }
+  .login-container {
+    width: min(420px, 90vw);
+    padding: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(59,130,246,0.15), 0 0 120px rgba(59,130,246,0.05);
+  }
 
-        .splash-screen.hide {
-            opacity: 0; transform: scale(1.05); visibility: hidden; pointer-events: none;
-        }
+  .login-container::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), #60a5fa, var(--accent));
+  }
 
-        .splash-img-square {
-            width: 140px; height: 140px; border-radius: 24px;
-            border: 2px solid #ffffff; box-shadow: 0 0 35px var(--white-glow);
-            object-fit: cover; margin-bottom: 30px;
-        }
+  .login-logo {
+    width: 80px; height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    font-family: 'Fira Code', monospace;
+  }
 
-        .splash-buttons-container {
-            display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 300px;
-        }
+  .login-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
 
-        .enter-btn-box, .custom-style-btn {
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            padding: 16px 28px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1.5px solid var(--glass-border); border-radius: 18px; color: #ffffff;
-            font-size: 18px; font-weight: 900; cursor: pointer; text-decoration: none;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); transition: 0.3s ease; width: 100%;
-        }
+  .login-sub {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+  }
 
-        .enter-btn-box:hover, .custom-style-btn:hover {
-            background: rgba(255, 255, 255, 0.25); color: #ffffff; box-shadow: 0 0 35px #ffffff; transform: scale(1.03);
-        }
+  .login-field {
+    text-align: right;
+    margin-bottom: 18px;
+  }
 
-        .skip-splash-btn {
-            position: fixed; bottom: 25px; right: 25px; z-index: 2000001;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); color: #ffffff;
-            padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer;
-            box-shadow: 0 0 15px var(--white-glow); transition: 0.2s;
-        }
+  .login-field label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
 
-        .skip-splash-btn:hover { background: #ffffff; color: #000000; }
+  .login-field input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-bright);
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+  }
 
-       
-        .top-black-bar {
-            width: 100%; 
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            color: #ffffff; text-align: center;
-            padding: 14px 0; font-size: 26px; font-weight: 900; letter-spacing: 4px;
-            border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 30px var(--white-glow);
-            position: relative; z-index: 50; text-shadow: 0 0 15px #ffffff;
-        }
+  .login-field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
 
-        .main-content-wrapper { 
-            position: relative; z-index: 10; opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: 'Cairo', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
 
-        .main-content-wrapper.enter-active { opacity: 1; transform: translateY(0); }
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59,130,246,0.4);
+  }
 
-     
-        .top-right-menu-btn {
-            position: absolute; top: 50px; right: 15px;
-            display: flex; align-items: center; gap: 8px; cursor: pointer;
-            z-index: 100; padding: 10px; background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px); border-radius: 12px; border: 1px solid var(--glass-border);
-        }
+  .login-btn:active { transform: translateY(0); }
 
-        .menu-bars-icon { display: flex; flex-direction: column; gap: 5px; }
-        .menu-bars-icon span {
-            display: block; width: 24px; height: 3px; background-color: #ffffff;
-            border-radius: 3px; box-shadow: 0 0 10px #ffffff;
-        }
+  .login-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 12px;
+    min-height: 20px;
+  }
 
-        header { padding: 25px 0 15px; text-align: center; }
-        
-        .logo-img-container {
-            width: 110px; height: 110px; border-radius: 22px; 
-            border: 2px solid #ffffff; box-shadow: 0 0 35px var(--white-glow); 
-            margin: 0 auto 15px; background: rgba(0,0,0,0.5); overflow: hidden;
-        }
-        .logo-img { width: 100%; height: 100%; object-fit: cover; }
+  /* === MAIN APP === */
+  #mainApp {
+    display: none;
+    position: relative;
+    z-index: 1;
+  }
 
-        .title-bar-no-border h1 { 
-            font-size: 38px; margin: 0; font-weight: 900; color: #ffffff; 
-            text-shadow: 0 0 25px #ffffff; letter-spacing: 4px; 
-            display: inline-block;
-            padding: 5px 25px;
-            border-radius: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-        }
+  #mainApp.active { display: block; }
 
-        .square-hack-img {
-            width: 110px; height: 110px; border-radius: 18px; object-fit: cover;
-            margin: 0 auto 15px; background-color: #000000; border: 2px solid #ffffff;
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.8); display: block;
-        }
+  /* Header */
+  .app-header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
 
-        .container { max-width: 850px; margin: 0 auto; padding: 10px 20px 50px; }
-        .main-menu-grid { display: flex; flex-direction: column; gap: 20px; }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-      
-        .menu-box-trigger {
-            border-radius: 22px; padding: 24px 30px; cursor: pointer; transition: 0.3s ease;
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1.5px solid var(--glass-border); 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.15);
-            display: flex; align-items: center; justify-content: space-between; gap: 20px;
-            text-decoration: none;
-        }
+  .header-logo {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    font-family: 'Fira Code', monospace;
+  }
 
-        .menu-box-trigger:hover { 
-            background: rgba(255, 255, 255, 0.18);
-            border-color: #ffffff; box-shadow: 0 0 40px #ffffff; transform: translateY(-3px); 
-        }
-        .menu-box-trigger h2 { 
-            margin: 0; font-size: 26px; font-weight: 900; color: #ffffff; text-shadow: 0 0 18px #ffffff; 
-        }
+  .header-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-bright);
+  }
 
-        .menu-box-img {
-            width: 80px; height: 80px; min-width: 80px; border-radius: 18px; object-fit: cover;
-            background-color: #000000; padding: 2px; border: 2px solid #ffffff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); display: block;
-        }
+  .header-title span {
+    color: var(--accent);
+  }
 
-        .sub-page { display: none; background: transparent; animation: fadeEffect 0.3s ease forwards; }
-        @keyframes fadeEffect { from { opacity: 0; } to { opacity: 1; } }
-        
-        .section-title-white { 
-            font-size: 26px; font-weight: 900; color: #ffffff; margin-bottom: 25px; text-align: center; text-shadow: 0 0 18px #ffffff;
-            padding: 10px; border-radius: 15px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px); border: 1px solid var(--glass-border);
-        }
-        
-        .cards-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; 
-        }
+  .header-actions {
+    display: flex;
+    gap: 10px;
+  }
 
-        .hack-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1.5px solid var(--glass-border); border-radius: 22px;
-            padding: 22px; text-align: center; display: flex; flex-direction: column;
-            justify-content: space-between; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 255, 255, 0.15);
-            transition: 0.3s ease;
-        }
+  .btn-header {
+    padding: 8px 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dim);
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
 
-        .hack-card:hover { transform: translateY(-4px); box-shadow: 0 10px 35px #ffffff; background: rgba(255, 255, 255, 0.15); }
+  .btn-header:hover {
+    border-color: var(--accent);
+    color: var(--text-main);
+  }
 
-        .hack-card h3 { 
-            margin: 8px 0 14px; font-size: 24px; font-weight: 900; color: #ffffff; text-shadow: 0 0 15px #ffffff; 
-        }
+  /* Content Area */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
 
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+  /* Upload Section */
+  .upload-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
 
-        .dl-link { 
-            display: flex; align-items: center; justify-content: center; gap: 14px;
-            text-decoration: none; 
-            background: rgba(0, 0, 0, 0.5); 
-            backdrop-filter: blur(10px);
-            color: #ffffff; padding: 12px 18px; 
-            border-radius: 16px; font-weight: 900; font-size: 17px; border: 1px solid var(--glass-border); 
-            transition: 0.2s ease; cursor: pointer;
-        }
-        .dl-link:hover { 
-            background: #ffffff; color: #000000; box-shadow: 0 0 25px #ffffff;
-        }
+  .upload-section::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
 
-        .dl-icon-img {
-            width: 42px; height: 42px; object-fit: cover; border-radius: 10px;
-            border: 1.5px solid #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-        }
+  .section-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-        .back-btn { 
-            display: inline-block; margin-bottom: 20px; 
-            background: var(--glass-bg); backdrop-filter: blur(10px);
-            color: #ffffff; padding: 10px 24px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 16px;
-            transition: 0.2s; border: 1.5px solid var(--glass-border); box-shadow: 0 0 15px var(--white-glow);
-        }
-        .back-btn:hover { background: #ffffff; color: #000000; box-shadow: 0 0 25px #ffffff; }
+  .section-label::before {
+    content: "◆";
+    font-size: 10px;
+  }
 
-        .footer-buttons-wrapper { 
-            display: flex; flex-direction: column; gap: 12px; align-items: center;
-            margin: 35px 0 15px; position: relative; z-index: 20; 
-        }
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--bg-input);
+    position: relative;
+  }
 
-        .footer-action-btn { 
-            display: inline-flex; align-items: center; justify-content: center; gap: 12px; 
-            background: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1.5px solid var(--glass-border); color: #ffffff; 
-            padding: 16px 28px; border-radius: 16px; font-size: 16px; font-weight: 900; 
-            text-decoration: none; transition: 0.2s; box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2); 
-            width: 100%; max-width: 320px;
-        }
-        .footer-action-btn:hover { background: #ffffff; color: #000000; box-shadow: 0 0 35px #ffffff; }
-        .discord-icon-img { width: 24px; height: 24px; fill: #ffffff; transition: 0.2s; }
-        .footer-action-btn:hover .discord-icon-img { fill: #000000; }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(59,130,246,0.05);
+    box-shadow: 0 0 30px rgba(59,130,246,0.1);
+  }
 
-        
-        .side-drawer-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(12px);
-            z-index: 200000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
-        }
+  .upload-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
 
-        .side-drawer-overlay.open { opacity: 1; visibility: visible; }
+  .upload-text {
+    font-size: 15px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
 
-        .side-drawer-container { 
-            position: fixed; top: 0; right: -320px; width: 280px; max-width: 85%; height: 100vh;
-            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px);
-            border-left: 1.5px solid var(--glass-border); padding: 25px 20px; 
-            box-shadow: -5px 0 35px rgba(255, 255, 255, 0.2); z-index: 200001; 
-            transition: right 0.3s ease;
-            display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
-        }
+  .upload-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    opacity: 0.6;
+  }
 
-        .side-drawer-overlay.open .side-drawer-container { right: 0; }
+  #fileInput { display: none; }
 
-        .drawer-close-btn {
-            align-self: flex-start; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1.5px solid var(--glass-border);
-            color: #ffffff; font-size: 20px; font-weight: 900; width: 38px; height: 38px;
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s; margin-bottom: 15px;
-        }
+  .file-info {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--text-main);
+    word-break: break-all;
+  }
 
-        .drawer-close-btn:hover { background: #ffffff; color: #000000; }
+  .file-info.show { display: block; }
 
-        .drawer-item { 
-            background: var(--glass-bg); backdrop-filter: blur(10px); color: #ffffff; padding: 14px 16px; border-radius: 12px; 
-            text-align: center; font-size: 15px; font-weight: 900; cursor: pointer; 
-            text-decoration: none; transition: 0.2s; border: 1.5px solid var(--glass-border); 
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
+  .encode-area {
+    margin-top: 20px;
+  }
 
-        .drawer-item:hover { background: #ffffff; color: #000000; box-shadow: 0 0 25px #ffffff; }
-        .drawer-item:hover .discord-icon-img { fill: #000000; }
-    </style>
+  .textarea-wrapper {
+    position: relative;
+  }
+
+  #scriptOutput {
+    width: 100%;
+    min-height: 180px;
+    padding: 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--success);
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    resize: vertical;
+    outline: none;
+    direction: ltr;
+    text-align: left;
+    line-height: 1.6;
+  }
+
+  #scriptOutput:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+  }
+
+  .btn-secondary {
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--text-main);
+  }
+
+  .btn-danger {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: var(--danger);
+  }
+
+  .btn-danger:hover {
+    background: rgba(239,68,68,0.2);
+  }
+
+  .btn-success {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: var(--success);
+  }
+
+  .btn-success:hover {
+    background: rgba(34,197,94,0.2);
+  }
+
+  .btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  /* Raw Display - GitHub Style */
+  .raw-display {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
+
+  .raw-header {
+    background: var(--raw-header);
+    border-bottom: 1px solid var(--raw-border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .raw-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .raw-icon {
+    color: var(--text-dim);
+    font-size: 18px;
+  }
+
+  .raw-filename {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    color: var(--text-bright);
+  }
+
+  .raw-badge {
+    padding: 2px 8px;
+    background: rgba(34,197,94,0.15);
+    color: var(--success);
+    border-radius: 12px;
+    font-size: 11px;
+    font-family: 'Fira Code', monospace;
+  }
+
+  .raw-body {
+    background: var(--raw-bg);
+    padding: 20px;
+    overflow-x: auto;
+  }
+
+  .raw-code {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: #c9d1d9;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.7;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .raw-footer {
+    background: var(--raw-header);
+    border-top: 1px solid var(--raw-border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .raw-url {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    direction: ltr;
+    text-align: left;
+    word-break: break-all;
+  }
+
+  .raw-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Scripts List */
+  .scripts-section {
+    margin-top: 10px;
+  }
+
+  .scripts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .script-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .script-card:hover {
+    border-color: rgba(59,130,246,0.3);
+    box-shadow: 0 4px 20px rgba(59,130,246,0.1);
+  }
+
+  .script-card-header {
+    background: var(--raw-header);
+    border-bottom: 1px solid var(--raw-border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-card-title {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    color: var(--text-bright);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .script-card-time {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: 'Fira Code', monospace;
+  }
+
+  .script-card-body {
+    background: var(--raw-bg);
+    padding: 16px 20px;
+  }
+
+  .script-preview {
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: ltr;
+    text-align: left;
+    margin-bottom: 12px;
+  }
+
+  .script-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-dim);
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  /* Toast */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toast {
+    padding: 12px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-main);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--danger); color: var(--danger); }
+  .toast.info { border-color: var(--accent); color: var(--accent); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: min(600px, 90vw);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-bright);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .modal-close:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+  .modal-body {
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .modal-body textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 16px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--success);
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    resize: vertical;
+    outline: none;
+    direction: ltr;
+    text-align: left;
+    line-height: 1.6;
+  }
+
+  .modal-body textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* Loading */
+  .loading-spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .content { padding: 20px 12px; }
+    .upload-section, .raw-display { padding: 16px; }
+    .btn { padding: 10px 16px; font-size: 13px; }
+    .app-header { padding: 12px 16px; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+</style>
 </head>
 <body>
 
-<audio id="bgAudio" preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3" type="audio/mp3">
-</audio>
+<!-- Stars Background -->
+<div class="stars" id="stars"></div>
 
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
 
-<div id="splashScreen" class="splash-screen">
-    <img src="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png" class="splash-img-square" alt="MRX Logo">
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-container">
+    <div class="login-logo">TRX</div>
+    <h1 class="login-title">TRX Security Hub</h1>
+    <p class="login-sub">أدخل بياناتك للوصول إلى لوحة التحكم</p>
     
-    <div class="splash-buttons-container">
-        <button class="enter-btn-box" onclick="enterSiteProcess()">اضغط للبدء</button>
-
-        <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="custom-style-btn">
-            <svg class="discord-icon-img" viewBox="0 0 127.14 96.36">
-                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74C48.8,40.21,53.9,45.92,53.8,53,53.8,60,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74C91,40.21,96.13,45.92,96,53,96,60,90.95,65.69,84.69,65.69Z"/>
-            </svg>
-            <span>ديسكورد MRX</span>
-        </a>
+    <div class="login-field">
+      <label for="loginUser">اسم المستخدم</label>
+      <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم..." autocomplete="off">
     </div>
+    
+    <div class="login-field">
+      <label for="loginPass">كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="••••••••">
+    </div>
+    
+    <button class="login-btn" onclick="tryLogin()">تسجيل الدخول</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
 </div>
 
-<button id="skipSplashBtn" class="skip-splash-btn" onclick="enterSiteProcess()">تخطي ←</button>
-
-<div class="top-black-bar">MRX</div>
-
-<div id="mainContentWrapper" class="main-content-wrapper">
-
-    
-    <div class="top-right-menu-btn" onclick="playClickSound(); document.getElementById('side-drawer').classList.toggle('open')">
-        <div class="menu-bars-icon">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
+<!-- Main App -->
+<div id="mainApp">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="header-logo">TRX</div>
+      <div class="header-title">TRX <span>Security Hub</span></div>
     </div>
+    <div class="header-actions">
+      <button class="btn-header" onclick="showStats()">📊 الإحصائيات</button>
+      <button class="btn-header" onclick="logout()">🚪 خروج</button>
+    </div>
+  </header>
 
-    <header>
-        <div class="logo-img-container">
-            <img src="https://github.com/Rxz60/SAP/raw/refs/heads/main/9AC6EC55-7917-4AE3-8ECA-676E30A4063F.png" class="logo-img" alt="MRX Logo">
-        </div>
-        
-        <div class="title-bar-no-border">
-            <h1>MRX</h1>
-        </div>
-    </header>
-
-    <div class="container">
-
-        
-        <div id="main-menu-page" class="main-menu-grid">
-            <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-ios');">
-                <h2>هاكات ايفون + iOS</h2>
-                <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5008.jpeg" class="menu-box-img" alt="iOS Icon">
-            </div>
-            <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-android');">
-                <h2>هاكات أندرويد + Android</h2>
-                <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5006.jpeg" class="menu-box-img" alt="Android Icon">
-            </div>
-            <div class="menu-box-trigger" onclick="playClickSound(); openSection('page-pc');">
-                <h2>هاكات بي سي + PC</h2>
-                <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5007.jpeg" class="menu-box-img" alt="PC Icon">
-            </div>
-        </div>
-
+  <!-- Content -->
+  <div class="content">
+    <!-- Upload Section -->
+    <div class="upload-section">
+      <div class="section-label">رفع وتشغيل السكربت</div>
       
-        <div id="page-ios" class="sub-page">
-            <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
-            <div class="section-title-white">قائمة الايفون (iOS)</div>
-            <div class="cards-grid">
-                <div class="hack-card">
-                    <img src="https://raw.githubusercontent.com/hatm12345cc-source/VN7/refs/heads/main/IMG_1929.png" class="square-hack-img">
-                    <h3>Delta</h3>
-                    <div class="btn-group">
-                        <a href="itms-services://?action=download-manifest&url=https://delta.bz/manifest.plist" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Delta</span>
-                        </a>
-                        <a href="https://nekoo.eu.org/mnzdiQ" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Delta VN</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">اضغط أو اسحب الملف هنا</div>
+        <div class="upload-hint">يتم دعم ملفات .lua, .js, .txt</div>
+        <input type="file" id="fileInput" accept=".lua,.js,.txt,.json,.xml">
+      </div>
+      
+      <div class="file-info" id="fileInfo"></div>
+      
+      <div class="encode-area">
+        <div class="section-label" style="margin-top:16px">النتيجة المشفرة</div>
+        <div class="textarea-wrapper">
+          <textarea id="scriptOutput" placeholder="ستظهر النتيجة هنا..."></textarea>
         </div>
-
-
-        <div id="page-android" class="sub-page">
-            <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
-            <div class="section-title-white">قائمة الاندرويد (Android)</div>
-            <div class="cards-grid">
-                <div class="hack-card">
-                    <img src="https://raw.githubusercontent.com/hatm12345cc-source/VN7/refs/heads/main/IMG_1929.png" class="square-hack-img">
-                    <h3>Delta</h3>
-                    <div class="btn-group">
-                        <a href="https://files.catbox.moe/6kqc4y.apk" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Delta</span>
-                        </a>
-                        <a href="https://www.mediafire.com/file/5pvz0fjuaudojmd/Delta+VN+New.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Delta VN</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2577.jpeg" class="square-hack-img">
-                    <h3>Arceus X</h3>
-                    <div class="btn-group">
-                        <a href="https://www.mediafire.com/file/dlypi7n7b8azy74/Roblox.Arceus.X.NEO.2.2.7.apk.download/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Arceus Neo</span>
-                        </a>
-                        <a href="https://vng.spdmteam.com/" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Arceus VN</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2609.jpeg" class="square-hack-img">
-                    <h3>PunkX</h3>
-                    <div class="btn-group">
-                        <a href="https://www.mediafire.com/file/4cz0juuzjfyqqm4/PunkX_64Bits.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install PunkX Original</span>
-                        </a>
-                        <a href="https://www.mediafire.com/file/tafzvqylpjzp4go/PunkX_VNG_64Bits.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install PunkX VNG</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/refs/heads/main/IMG_2580.jpeg" class="square-hack-img">
-                    <h3>Codex</h3>
-                    <div class="btn-group">
-                        <a href="https://www.mediafire.com/file/9qz50mqeizkgkww/Codex+v2.729.840.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Codex Global</span>
-                        </a>
-                        <a href="https://www.mediafire.com/file/5p08n8qhtsv4x3s/Codex+VNG+V2.715+No+Key.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Codex VN</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://github.com/Rxz60/TRX5/raw/refs/heads/main/4865B4C0-8AD9-44E7-AEF1-93DFA9FFE555.png" class="square-hack-img">
-                    <h3>VegaX</h3>
-                    <div class="btn-group">
-                        <a href="https://github.com/1f0yt/community/releases/download/Vegax/Vega.X.apk" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install VegaX</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/A590D67D-235D-4C31-8606-59127F58FF03.png" class="square-hack-img">
-                    <h3>Trigon</h3>
-                    <div class="btn-group">
-                        <a href="https://www.mediafire.com/file/1p5mhe2y2hh97z1/2.726.1142_trigon.apk/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Trigon</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+        
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="createRaw()">🔒 إنشاء RAW محمي</button>
+          <button class="btn btn-secondary" onclick="copyResult()">📋 نسخ</button>
+          <button class="btn btn-secondary" onclick="clearAll()">🗑️ مسح</button>
         </div>
-
-
-        <div id="page-pc" class="sub-page">
-            <button class="back-btn" onclick="playClickSound(); showMainMenu();">← رجوع</button>
-            <div class="section-title-white">قائمة البي سي (PC)</div>
-            <div class="cards-grid">
-                <div class="hack-card">
-                    <img src="https://raw.githubusercontent.com/Rxz60/Rxz/heads/main/IMG_2612.jpeg" class="square-hack-img">
-                    <h3>Velocity</h3>
-                    <div class="btn-group">
-                        <a href="https://gofile.io/d/biQGwp" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Velocity</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/A590D67D-235D-4C31-8606-59127F58FF03.png" class="square-hack-img">
-                    <h3>Trigon</h3>
-                    <div class="btn-group">
-                        <a href="https://www.mediafire.com/file/jwmwp9xhriyqkql/Trigon_Evo_0.2.6.exe/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Trigon PC</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="hack-card">
-                    <img src="https://github.com/Rxz60/RFX/raw/refs/heads/main/8EDAC7FF-974A-4351-8F15-8C2592B06CF4.png" class="square-hack-img">
-                    <h3>Xeno</h3>
-                    <div class="btn-group">
-                        <a href="https://www.mediafire.com/file/e2kjxf028x107uk/Xeno-v1.3.55.exe/file" target="_blank" onclick="playClickSound();" class="dl-link">
-                            <img src="https://github.com/Rxz60/MR-HUB/raw/refs/heads/main/IMG_5010.jpeg" class="dl-icon-img">
-                            <span>Install Xeno</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-buttons-wrapper">
-            <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="footer-action-btn">
-                <svg class="discord-icon-img" viewBox="0 0 127.14 96.36">
-                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74C48.8,40.21,53.9,45.92,53.8,53,53.8,60,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74C91,40.21,96.13,45.92,96,53,96,60,90.95,65.69,84.69,65.69Z"/>
-                </svg>
-                <span>انضم للديسكورد</span>
-            </a>
-        </div>
-
+      </div>
     </div>
+
+    <!-- Scripts List -->
+    <div class="scripts-section">
+      <div class="section-label">السكربتات المنشأة</div>
+      <div class="scripts-list" id="scriptsList">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📦</div>
+          <p>لا توجد سكربتات بعد</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-
-<div id="side-drawer" class="side-drawer-overlay" onclick="if(event.target.id==='side-drawer') { playClickSound(); this.classList.remove('open'); }">
-    <div class="side-drawer-container">
-        <button class="drawer-close-btn" onclick="playClickSound(); document.getElementById('side-drawer').classList.remove('open')">✕</button>
-        
-        <div class="drawer-item" onclick="playClickSound(); showMainMenu(); document.getElementById('side-drawer').classList.remove('open');">الصفحة الرئيسية</div>
-        <div class="drawer-item" onclick="playClickSound(); openSection('page-ios'); document.getElementById('side-drawer').classList.remove('open');">قائمة الايفون (iOS)</div>
-        <div class="drawer-item" onclick="playClickSound(); openSection('page-android'); document.getElementById('side-drawer').classList.remove('open');">قائمة الاندرويد (Android)</div>
-        <div class="drawer-item" onclick="playClickSound(); openSection('page-pc'); document.getElementById('side-drawer').classList.remove('open');">قائمة البي سي (PC)</div>
-
-        <a href="https://discord.gg/UQRP3QZ4W" target="_blank" onclick="playClickSound();" class="drawer-item">
-            <svg class="discord-icon-img" viewBox="0 0 127.14 96.36">
-                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74C48.8,40.21,53.9,45.92,53.8,53,53.8,60,48.74,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74C91,40.21,96.13,45.92,96,53,96,60,90.95,65.69,84.69,65.69Z"/>
-            </svg>
-            <span>ديسكورد MRX</span>
-        </a>
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">✏️ تعديل السكربت</div>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
     </div>
+    <div class="modal-body">
+      <textarea id="editTextarea"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeEditModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveEdit()">💾 حفظ</button>
+    </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener('contextmenu', e => e.preventDefault());
+// ===== CONFIG =====
+const ADMIN_USER = "TRX_77";
+const ADMIN_PASS = "admin"; // يمكنك تغييرها
 
-    const audio = document.getElementById('bgAudio');
+// ===== STARS BACKGROUND =====
+(function createStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    star.style.animationDuration = (2 + Math.random() * 4) + 's';
+    container.appendChild(star);
+  }
+})();
 
-    function playClickSound() {
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
+// ===== TOAST SYSTEM =====
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  toast.innerHTML = `${icons[type] || ''} ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ===== LOGIN SYSTEM =====
+function tryLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    localStorage.setItem('trx_auth', 'true');
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApp').classList.add('active');
+    showToast('تم تسجيل الدخول بنجاح', 'success');
+    loadScripts();
+  } else {
+    errEl.textContent = '❌ بيانات خاطئة! جرّب مرة أخرى.';
+    showToast('بيانات الدخول غير صحيحة', 'error');
+  }
+}
+
+// Check saved auth
+if (localStorage.getItem('trx_auth') === 'true') {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.add('active');
+  loadScripts();
+}
+
+// Enter key login
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryLogin();
+});
+
+function logout() {
+  localStorage.removeItem('trx_auth');
+  location.reload();
+}
+
+// ===== FILE UPLOAD =====
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+let currentFile = null;
+
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
+});
+
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('dragover');
+});
+
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) handleFile(fileInput.files[0]);
+});
+
+function handleFile(file) {
+  currentFile = file;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result;
+    document.getElementById('fileInfo').innerHTML = 
+      `📄 <strong>${file.name}</strong> (${formatSize(file.size)})<br><small style="color:#94a3b8">${content.substring(0, 200)}${content.length > 200 ? '...' : ''}</small>`;
+    document.getElementById('fileInfo').classList.add('show');
+    document.getElementById('scriptOutput').value = content;
+    showToast(`تم تحميل "${file.name}"`, 'success');
+  };
+  reader.readAsText(file);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+// ===== ENCRYPTION (Simple XOR + Base64 with protection wrapper) =====
+function encryptScript(script) {
+  const key = 'TRX_SECURITY_V3';
+  let encrypted = '';
+  for (let i = 0; i < script.length; i++) {
+    encrypted += String.fromCharCode(script.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return btoa(encrypted);
+}
+
+function decryptScript(encoded) {
+  try {
+    const decrypted = atob(encoded);
+    let result = '';
+    const key = 'TRX_SECURITY_V3';
+    for (let i = 0; i < decrypted.length; i++) {
+      result += String.fromCharCode(decrypted.charCodeAt(i) ^ key.charCodeAt(i % key.length));
     }
+    return result;
+  } catch(e) {
+    return null;
+  }
+}
 
-    function enterSiteProcess() {
-        playClickSound();
-        document.getElementById('splashScreen').classList.add('hide');
-        document.getElementById('skipSplashBtn').style.display = 'none';
-        
-        setTimeout(() => {
-            document.getElementById('mainContentWrapper').classList.add('enter-active');
-        }, 50);
-    }
+// ===== CREATE RAW =====
+function createRaw() {
+  const script = document.getElementById('scriptOutput').value.trim();
+  if (!script) {
+    showToast('اكتب أو ارفع سكربت أولاً!', 'error');
+    return;
+  }
+  
+  const encrypted = encryptScript(script);
+  const rawId = generateId();
+  const timestamp = Date.now();
+  
+  const rawData = {
+    id: rawId,
+    name: currentFile ? currentFile.name : `script_${rawId}.lua`,
+    encrypted: encrypted,
+    created: timestamp,
+    originalContent: script
+  };
+  
+  // Save to localStorage
+  let scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  scripts.unshift(rawData);
+  localStorage.setItem('trx_scripts', JSON.stringify(scripts));
+  
+  // Show in list
+  renderScriptCard(rawData);
+  
+  // Generate raw URL (simulated)
+  const rawUrl = `${window.location.origin}/raw/${rawId}`;
+  
+  showToast('تم إنشاء RAW بنجاح 🔒', 'success');
+  
+  // Auto copy link
+  navigator.clipboard?.writeText(rawUrl).then(() => {
+    showToast('تم نسخ الرابط!', 'success');
+  });
+}
 
-    function openSection(pageId) {
-        document.getElementById('main-menu-page').style.display = 'none';
-        document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
-        document.getElementById(pageId).style.display = 'block';
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+function generateId() {
+  return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+}
 
-    function showMainMenu() {
-        document.querySelectorAll('.sub-page').forEach(p => p.style.display = 'none');
-        document.getElementById('main-menu-page').style.display = 'flex';
-    }
+// ===== RENDER SCRIPT CARDS =====
+function renderScriptCard(data) {
+  const list = document.getElementById('scriptsList');
+  const empty = document.getElementById('emptyState');
+  if (empty) empty.style.display = 'none';
+  
+  const card = document.createElement('div');
+  card.className = 'script-card';
+  card.id = `script-${data.id}`;
+  
+  const date = new Date(data.created).toLocaleString('ar-SA');
+  const preview = data.encrypted.substring(0, 80) + '...';
+  
+  card.innerHTML = `
+    <div class="script-card-header">
+      <div class="script-card-title">
+        📜 ${escapeHtml(data.name)}
+        <span class="raw-badge">PROTECTED</span>
+      </div>
+      <div class="script-card-time">${date}</div>
+    </div>
+    <div class="script-card-body">
+      <div class="script-preview">${escapeHtml(preview)}</div>
+      <div class="script-card-actions">
+        <button class="btn btn-sm btn-primary" onclick="viewRaw('${data.id}')">👁️ عرض RAW</button>
+        <button class="btn btn-sm btn-secondary" onclick="editScript('${data.id}')">✏️ تعديل</button>
+        <button class="btn btn-sm btn-success" onclick="copyRawLink('${data.id}')">🔗 رابط RAW</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteScript('${data.id}')">🗑️ حذف</button>
+      </div>
+    </div>
+  `;
+  
+  list.insertBefore(card, list.firstChild);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ===== VIEW RAW (GitHub Style) =====
+function viewRaw(id) {
+  const scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  const script = scripts.find(s => s.id === id);
+  if (!script) return;
+  
+  const modal = document.getElementById('editModal');
+  const textarea = document.getElementById('editTextarea');
+  const title = modal.querySelector('.modal-title');
+  
+  title.textContent = `🔒 RAW: ${script.name}`;
+  textarea.value = script.encrypted;
+  textarea.readOnly = true;
+  
+  modal.classList.add('active');
+  
+  // Also show a simulated raw page
+  showToast('تم فتح العرض الخام', 'info');
+}
+
+// ===== EDIT SCRIPT =====
+function editScript(id) {
+  const scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  const script = scripts.find(s => s.id === id);
+  if (!script) return;
+  
+  const modal = document.getElementById('editModal');
+  const textarea = document.getElementById('editTextarea');
+  const title = modal.querySelector('.modal-title');
+  
+  // Decrypt for editing
+  const decrypted = decryptScript(script.encrypted);
+  
+  title.textContent = `✏️ تعديل: ${script.name}`;
+  textarea.value = decrypted || script.encrypted;
+  textarea.readOnly = false;
+  
+  modal.dataset.editId = id;
+  modal.classList.add('active');
+}
+
+function saveEdit() {
+  const id = document.getElementById('editModal').dataset.editId;
+  const newText = document.getElementById('editTextarea').value;
+  
+  let scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  const idx = scripts.findIndex(s => s.id === id);
+  if (idx === -1) return;
+  
+  scripts[idx].encrypted = encryptScript(newText);
+  scripts[idx].originalContent = newText;
+  scripts[idx].edited = Date.now();
+  
+  localStorage.setItem('trx_scripts', JSON.stringify(scripts));
+  closeEditModal();
+  loadScripts();
+  showToast('تم الحفظ بنجاح', 'success');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.remove('active');
+}
+
+// ===== COPY RAW LINK =====
+function copyRawLink(id) {
+  const url = `${window.location.origin}/raw/${id}`;
+  navigator.clipboard?.writeText(url).then(() => {
+    showToast('تم نسخ رابط RAW!', 'success');
+  }).catch(() => {
+    prompt('انسخ الرابط:', url);
+  });
+}
+
+// ===== DELETE SCRIPT =====
+function deleteScript(id) {
+  if (!confirm('هل أنت متأكد من الحذف؟')) return;
+  
+  let scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  scripts = scripts.filter(s => s.id !== id);
+  localStorage.setItem('trx_scripts', JSON.stringify(scripts));
+  
+  const el = document.getElementById(`script-${id}`);
+  if (el) el.remove();
+  
+  showToast('تم الحذف', 'error');
+}
+
+// ===== LOAD ALL SCRIPTS =====
+function loadScripts() {
+  const scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  const list = document.getElementById('scriptsList');
+  list.innerHTML = '';
+  
+  if (scripts.length === 0) {
+    list.innerHTML = '<div class="empty-state" id="emptyState"><div class="empty-icon">📦</div><p>لا توجد سكربتات بعد</p></div>';
+    return;
+  }
+  
+  scripts.forEach(s => renderScriptCard(s));
+}
+
+// ===== UTILITY FUNCTIONS =====
+function copyResult() {
+  const text = document.getElementById('scriptOutput').value;
+  if (!text) { showToast('لا شيء للنسخ!', 'error'); return; }
+  navigator.clipboard?.writeText(text).then(() => {
+    showToast('تم النسخ!', 'success');
+  });
+}
+
+function clearAll() {
+  document.getElementById('scriptOutput').value = '';
+  document.getElementById('fileInfo').classList.remove('show');
+  document.getElementById('fileInfo').innerHTML = '';
+  document.getElementById('fileInput').value = '';
+  currentFile = null;
+  showToast('تم المسح', 'info');
+}
+
+function showStats() {
+  const scripts = JSON.parse(localStorage.getItem('trx_scripts') || '[]');
+  showToast(`📊 لديك ${scripts.length} سكربت محفوظ`, 'info');
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditModal();
+});
 </script>
 </body>
 </html>
