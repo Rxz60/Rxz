@@ -3,86 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My companion Al-Fa - TRX Security</title>
-    <!-- Tailwind CSS -->
+    <title>My companion Al-Fa - </title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
-    
+
     <style>
-        :root {
-            color-scheme: dark;
-        }
+        :root { color-scheme: dark; }
         body {
             font-family: 'Cairo', sans-serif;
             background-color: #080a0f;
             color: #e1e7ef;
             overflow-x: hidden;
         }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
 
-        .code-font {
-            font-family: 'JetBrains Mono', monospace;
-        }
+        textarea::-webkit-scrollbar, ::-webkit-scrollbar { width: 8px; height: 8px; }
+        textarea::-webkit-scrollbar-track, ::-webkit-scrollbar-track { background: #0b0d13; border-radius: 8px; }
+        textarea::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb { background: #202736; border-radius: 8px; }
+        textarea::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover { background: #2f3a50; }
 
-        /* Custom Scrollbar */
-        textarea::-webkit-scrollbar, ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        textarea::-webkit-scrollbar-track, ::-webkit-scrollbar-track {
-            background: #0b0d13;
-            border-radius: 8px;
-        }
-        textarea::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb {
-            background: #202736;
-            border-radius: 8px;
-        }
-        textarea::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover {
-            background: #2f3a50;
-        }
-
-        /* Scanline Overlay for Security View */
+        /* Scanlines للعرض الخبيث */
         .scanlines:before {
             content: "";
             position: fixed;
             inset: -20%;
-            background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 3px),
-                        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 90px);
+            background: repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 3px),
+                        repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 90px);
             animation: scan 7s linear infinite;
             pointer-events: none;
-            z-index: 10;
+            z-index: 60;
         }
+        .dots:after { content: "_"; animation: blink 1s steps(2) infinite; }
+        @keyframes scan { to { transform: translate3d(8%, 0, 0); } }
+        @keyframes blink { 50% { opacity: 0; } }
 
-        .dots:after {
-            content: "_";
-            animation: blink 1s steps(2) infinite;
+        .raw-github-bg { background-color: #0d1117; color: #c9d1d9; }
+
+        /* حماية الكود: منع التحديد والنسخ من الطبقة الخارجية */
+        .protected-code {
+            -webkit-user-select: none;
+            user-select: none;
+            filter: blur(6px);
+            pointer-events: none;
+            transition: filter 0.4s ease, user-select 0.4s ease;
         }
-
-        @keyframes scan {
-            to { transform: translate3d(8%, 0, 0); }
-        }
-
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-        .raw-github-bg {
-            background-color: #0d1117;
-            color: #c9d1d9;
+        .protected-code.unlocked {
+            filter: none;
+            pointer-events: auto;
+            -webkit-user-select: text;
+            user-select: text;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-center items-center p-3 sm:p-6 relative">
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-[#161b26] border border-[#2e384e] text-white px-5 py-3 rounded-xl text-sm shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3">
+    <!-- Toast -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] bg-[#161b26] border border-[#2e384e] text-white px-5 py-3 rounded-xl text-sm shadow-2xl opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3">
         <i id="toastIcon" class="fa-solid fa-circle-check text-green-400 text-base"></i>
         <span id="toastMsg" class="font-medium">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- 1. LOGIN SCREEN -->
+    <!-- 1. شاشة الدخول -->
     <div id="loginScreen" class="w-full max-w-md bg-[#141822] border border-[#202736] rounded-2xl p-6 sm:p-8 shadow-2xl relative z-20">
         <div class="text-center mb-8">
             <div class="w-16 h-16 bg-[#1a2130] border border-[#2b354a] rounded-2xl flex items-center justify-center mx-auto mb-4 text-[#3b82f6] shadow-inner">
@@ -96,23 +78,14 @@
             <div>
                 <label class="block text-xs font-semibold text-gray-300 mb-2">مفتاح الدخول (Access Key):</label>
                 <div class="relative">
-                    <input 
-                        type="password" 
-                        id="accessKeyInput" 
-                        placeholder="TRX_77 or Key..." 
-                        required
-                        class="w-full bg-[#0b0d13] text-gray-100 placeholder-gray-600 border border-[#202736] rounded-xl px-4 py-3.5 pl-10 focus:outline-none focus:border-[#388e3c] focus:ring-1 focus:ring-[#388e3c] code-font text-sm transition-all"
-                    >
+                    <input type="password" id="accessKeyInput" placeholder="TRX_77 or Key..." required
+                        class="w-full bg-[#0b0d13] text-gray-100 placeholder-gray-600 border border-[#202736] rounded-xl px-4 py-3.5 pl-10 focus:outline-none focus:border-[#388e3c] focus:ring-1 focus:ring-[#388e3c] code-font text-sm transition-all">
                     <button type="button" onclick="togglePassVisibility()" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
                         <i id="passEye" class="fa-solid fa-eye"></i>
                     </button>
                 </div>
             </div>
-
-            <button 
-                type="submit" 
-                class="w-full bg-[#3d9943] hover:bg-[#348439] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#3d9943]/20 cursor-pointer text-sm"
-            >
+            <button type="submit" class="w-full bg-[#3d9943] hover:bg-[#348439] active:scale-[0.98] text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#3d9943]/20 cursor-pointer text-sm">
                 <i class="fa-solid fa-right-to-bracket"></i>
                 <span>دخول النظام</span>
             </button>
@@ -124,11 +97,8 @@
         </div>
     </div>
 
-
-    <!-- 2. MAIN DASHBOARD SCREEN (AL-FA UI STYLE) -->
+    <!-- 2. لوحة التحكم -->
     <div id="dashboardScreen" class="w-full max-w-2xl bg-[#141822] border border-[#202736] rounded-2xl p-5 sm:p-7 shadow-2xl relative z-20 hidden my-6">
-        
-        <!-- Header Title -->
         <div class="flex items-center justify-between pb-4 mb-6 border-b border-[#202736]/80 dir-ltr">
             <h1 class="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
                 <span>My companion Al-Fa</span>
@@ -140,30 +110,22 @@
             </button>
         </div>
 
-        <!-- Script Input Section -->
         <div class="mb-5">
             <div class="flex items-center justify-between mb-2">
                 <label class="text-xs sm:text-sm font-bold text-gray-300 flex items-center gap-2">
                     <span class="code-font text-blue-400 font-bold">&lt;/&gt;</span>
                     <span>النص / السكريبت الأصلي (Lua):</span>
                 </label>
-                <!-- File Upload Button -->
                 <label class="cursor-pointer text-xs text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-2.5 py-1 rounded-lg border border-blue-500/20 transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-file-arrow-up"></i>
                     <span>رفع ملف</span>
                     <input type="file" id="fileInput" accept=".lua,.txt" onchange="handleFileUpload(event)" class="hidden">
                 </label>
             </div>
-            
-            <textarea 
-                id="scriptInput" 
-                rows="6" 
-                placeholder="ضع  السكريبت  هنا  أو قم برفع ملف Lua . . ."
-                class="w-full bg-[#0b0d13] text-gray-200 placeholder-gray-600 border border-[#202736] rounded-xl p-3.5 focus:outline-none focus:border-[#388e3c] focus:ring-1 focus:ring-[#388e3c] transition-all resize-y code-font text-xs sm:text-sm leading-relaxed"
-            ></textarea>
+            <textarea id="scriptInput" rows="6" placeholder="ضع السكريبت هنا أو قم برفع ملف Lua . . ."
+                class="w-full bg-[#0b0d13] text-gray-200 placeholder-gray-600 border border-[#202736] rounded-xl p-3.5 focus:outline-none focus:border-[#388e3c] focus:ring-1 focus:ring-[#388e3c] transition-all resize-y code-font text-xs sm:text-sm leading-relaxed"></textarea>
         </div>
 
-        <!-- Edit Banner -->
         <div id="editBanner" class="hidden mb-4 p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center justify-between text-xs text-amber-300">
             <span class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-to-square"></i>
@@ -172,84 +134,32 @@
             <button onclick="cancelEdit()" class="text-gray-400 hover:text-white underline">إلغاء</button>
         </div>
 
-        <!-- Action Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            <button 
-                onclick="copyInputValue()"
-                class="w-full bg-[#202736] hover:bg-[#2a3346] active:scale-[0.98] text-gray-200 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer border border-[#2b3548] text-xs sm:text-sm"
-            >
+            <button onclick="copyInputValue()" class="w-full bg-[#202736] hover:bg-[#2a3346] active:scale-[0.98] text-gray-200 font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer border border-[#2b3548] text-xs sm:text-sm">
                 <i class="fa-regular fa-copy"></i>
                 <span>نسخ النتيجة</span>
             </button>
-
-            <button 
-                id="saveBtn"
-                onclick="processAndSaveScript()"
-                class="w-full bg-[#3d9943] hover:bg-[#348439] active:scale-[0.98] text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#3d9943]/20 cursor-pointer text-xs sm:text-sm"
-            >
+            <button id="saveBtn" onclick="processAndSaveScript()" class="w-full bg-[#3d9943] hover:bg-[#348439] active:scale-[0.98] text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#3d9943]/20 cursor-pointer text-xs sm:text-sm">
                 <i class="fa-solid fa-play"></i>
                 <span id="saveBtnText">إنشاء RAW Lua</span>
             </button>
         </div>
 
-        <!-- Footer Shield Badge -->
         <div class="flex items-center justify-center gap-2 text-xs text-gray-400 pt-1 pb-6 border-b border-[#202736]">
             <i class="fa-shield-halved fa-solid text-gray-400"></i>
             <span>الأداة جاهزة للتشفير وتوليد روابط RAW المحمية</span>
         </div>
 
-        <!-- Generated Scripts List Section -->
         <div class="mt-6">
             <h3 class="text-sm font-bold text-gray-300 mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-blue-400"></i>
                 <span>السكريبتات المنشأة والروابط المحمية:</span>
             </h3>
-
-            <div id="scriptsList" class="space-y-3">
-                <!-- Dynamic Items Inserted Here -->
-            </div>
+            <div id="scriptsList" class="space-y-3"></div>
         </div>
     </div>
 
-
-    <!-- 3. RAW / SECURITY VIEW SCREEN (TRX V3) -->
-    <div id="securityViewScreen" class="fixed inset-0 w-full h-full bg-black text-white z-50 hidden grid place-items-center p-4 scanlines">
-        <main class="relative text-center p-8 sm:p-11 border border-white bg-[#050505] w-full max-w-lg shadow-[0_0_80px_rgba(255,255,255,0.22)] z-20">
-            <div class="w-32 h-32 rounded-full mx-auto mb-5 grid place-items-center border-2 border-white bg-black text-5xl font-black">
-                F
-            </div>
-            
-            <div class="inline-block border border-white px-3.5 py-1.5 text-[11px] tracking-[0.35em] mb-3.5 uppercase font-mono">
-                TRX // V3
-            </div>
-
-            <h1 class="text-xl sm:text-2xl font-black tracking-wider my-1.5 leading-tight font-mono">
-                TRX / Security TRX V3 &gt; <span class="text-[#ff5151]">Intrusive</span>
-            </h1>
-
-            <div class="text-[#b9b9b9] text-xs tracking-[0.25em] mb-4.5 font-mono uppercase">
-                UNAUTHORIZED ACCESS TRX
-            </div>
-
-            <p class="text-[#7e7e7e] leading-relaxed text-xs border-t border-dashed border-[#2a2a2a] pt-3.5 font-mono">
-                // intrusion_logged <span class="dots"></span><br>
-                هذا الرابط محمي. لا يمكن استخراج المحتوى من المتصفح أو البوتات.<br>
-                تم تسجيل بصمة المحاولة ورفض الجلسة.
-            </p>
-
-            <div class="mt-6 pt-4 border-t border-[#1a1a1a] flex flex-wrap items-center justify-center gap-2 text-xs">
-                <button onclick="executeLuaClientDownload()" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white px-3 py-1.5 rounded transition-all font-mono">
-                    <i class="fa-solid fa-code text-green-400"></i> [تفعيل Lua Client RAW]
-                </button>
-                <button onclick="closeSecurityView()" class="bg-red-950/50 hover:bg-red-900/50 border border-red-700/50 text-red-300 px-3 py-1.5 rounded transition-all font-mono">
-                    [إغلاق المعاينة]
-                </button>
-            </div>
-        </main>
-    </div>
-
-
-    <!-- 4. GITHUB-LIKE RAW VIEW SCREEN -->
+    <!-- 3. عرض RAW (ستايل GitHub) مع غلاف HTML خبيث -->
     <div id="rawGithubScreen" class="fixed inset-0 w-full h-full raw-github-bg z-50 hidden overflow-auto p-4 sm:p-6 code-font dir-ltr">
         <div class="max-w-5xl mx-auto">
             <div class="flex items-center justify-between pb-3 mb-4 border-b border-gray-800 text-xs">
@@ -259,20 +169,40 @@
                     <span class="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px]">RAW Lua Active</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="copyRawCode()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-1 rounded text-xs border border-gray-700 transition-all flex items-center gap-1.5">
-                        <i class="fa-regular fa-copy"></i> Copy
+                    <button id="unmaskBtn" onclick="revealRawCode()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-1 rounded text-xs border border-red-700/40 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-skull-crossbones"></i> [ UNLOCK RAW ]
                     </button>
-                    <button onclick="closeRawGithubView()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-1 rounded text-xs border border-red-700/40 transition-all">
+                    <button id="exitRawBtn" onclick="closeRawGithubView()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1 rounded text-xs border border-gray-700 transition-all hidden">
                         Exit Raw
                     </button>
                 </div>
             </div>
 
-            <pre id="rawCodeContainer" class="text-xs sm:text-sm text-gray-300 font-mono whitespace-pre-wrap break-all leading-relaxed bg-[#010409] p-4 rounded-lg border border-gray-800/80 selection:bg-blue-900"></pre>
+            <!-- الغلاف الخبيث فوق الكود -->
+            <div id="evilShield" class="scanlines relative">
+                <!-- طبقة الحماية -->
+                <div id="shieldOverlay" class="absolute inset-0 z-20 grid place-items-center bg-[#050505]/95 border border-white">
+                    <div class="text-center p-8 w-full max-w-md">
+                        <div class="w-24 h-24 rounded-full mx-auto mb-4 grid place-items-center border-2 border-white bg-black text-4xl font-black">F</div>
+                        <div class="inline-block border border-white px-3 py-1 text-[10px] tracking-[0.35em] mb-3 uppercase font-mono">TRX // V3</div>
+                        <h2 class="text-lg sm:text-xl font-black tracking-wider mb-2 font-mono">
+                            TRX / Security V3 &gt; <span class="text-[#ff5151]">Intrusive</span>
+                        </h2>
+                        <div class="text-[#b9b9b9] text-[10px] tracking-[0.25em] mb-3 font-mono uppercase">PROTECTED RAW // ROBLOX LUA</div>
+                        <p class="text-[#7e7e7e] leading-relaxed text-[11px] border-t border-dashed border-[#2a2a2a] pt-3 font-mono">
+                            // shield_active <span class="dots"></span><br>
+                            الكود محمي بطبقة HTML خبيثة.<br>
+                            أي محاولة نسخ أو تتبع تسجل وترفض.
+                        </p>
+                        <div class="mt-4 text-[10px] text-red-400 font-mono" id="intrusionLog">// waiting...</div>
+                    </div>
+                </div>
+
+                <!-- الكود (مغطى بالضباب حتى الفتح) -->
+                <pre id="rawCodeContainer" class="protected-code text-xs sm:text-sm text-gray-300 font-mono whitespace-pre-wrap break-all leading-relaxed bg-[#010409] p-4 rounded-lg border border-gray-800/80 min-h-[200px]"></pre>
+            </div>
         </div>
     </div>
-
-
 
     <script>
         const VALID_KEYS = [
@@ -283,18 +213,63 @@
         let scripts = JSON.parse(localStorage.getItem('trx_saved_scripts') || '[]');
         let currentEditingId = null;
         let activeViewScript = null;
+        let rawUnlocked = false;
+
+        // ===== فحص رابط RAW عند فتح الصفحة مباشرة =====
+        function checkRawLinkOnLoad() {
+            const params = new URLSearchParams(window.location.search);
+            const rawId = params.get('raw_id');
+            if (!rawId) return false;
+
+            const script = scripts.find(s => s.id === rawId);
+            if (!script) {
+                document.body.innerHTML = `<div class="code-font text-center text-red-400 p-10">404 // RAW script not found or deleted.</div>`;
+                return true;
+            }
+
+            // إخفاء كل شيء وعرض صفحة RAW فقط
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            openRawGithubView(script, true);
+            return true;
+        }
 
         window.onload = function() {
-            const isAuth = sessionStorage.getItem('trx_auth') === 'true';
-            if (isAuth) {
-                showDashboard();
-            }
+            if (checkRawLinkOnLoad()) return;
+            if (sessionStorage.getItem('trx_auth') === 'true') showDashboard();
         };
 
+        // ===== حماية الغلاف الخبيث (تشتغل فقط في وضع RAW) =====
+        document.addEventListener('contextmenu', e => {
+            if (isRawMode() && !rawUnlocked) { e.preventDefault(); logIntrusion('contextmenu_blocked'); }
+        });
+        document.addEventListener('keydown', e => {
+            if (isRawMode() && !rawUnlocked) {
+                const k = e.key.toUpperCase();
+                if (k === 'F12' || (e.ctrlKey && e.shiftKey && (k === 'I' || k === 'J' || k === 'C')) || (e.ctrlKey && k === 'U') || (e.ctrlKey && k === 'S')) {
+                    e.preventDefault(); logIntrusion('devtools_blocked');
+                }
+            }
+        });
+        document.addEventListener('copy', e => {
+            if (isRawMode() && !rawUnlocked) { e.preventDefault(); logIntrusion('copy_blocked'); }
+        });
+
+        function isRawMode() {
+            return !document.getElementById('rawGithubScreen').classList.contains('hidden');
+        }
+
+        let intrusionCount = 0;
+        function logIntrusion(type) {
+            intrusionCount++;
+            const el = document.getElementById('intrusionLog');
+            if (el) el.textContent = `// intrusion_logged: ${type} #${intrusionCount} :: session_refused`;
+        }
+
+        // ===== الدخول والخروج =====
         function handleLogin(e) {
             e.preventDefault();
             const keyInput = document.getElementById('accessKeyInput').value.trim();
-
             if (VALID_KEYS.includes(keyInput)) {
                 sessionStorage.setItem('trx_auth', 'true');
                 showToast('تم تسجيل الدخول بنجاح!', 'fa-circle-check text-green-400');
@@ -329,12 +304,12 @@
             renderScripts();
         }
 
+        // ===== رفع ملف =====
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = e => {
                 document.getElementById('scriptInput').value = e.target.result;
                 showToast(`تم تحميل الملف: ${file.name}`, 'fa-file-circle-check text-green-400');
             };
@@ -343,19 +318,14 @@
 
         function copyInputValue() {
             const text = document.getElementById('scriptInput').value;
-            if (!text.trim()) {
-                showToast('لا يوجد نص لنسخه!', 'fa-triangle-exclamation text-amber-400');
-                return;
-            }
+            if (!text.trim()) { showToast('لا يوجد نص لنسخه!', 'fa-triangle-exclamation text-amber-400'); return; }
             copyToClipboardText(text, 'تم نسخ السكريبت بنجاح!');
         }
 
+        // ===== إنشاء / حفظ =====
         function processAndSaveScript() {
             const content = document.getElementById('scriptInput').value.trim();
-            if (!content) {
-                showToast('يرجى كتابة السكريبت أو إدراج ملف أولاً!', 'fa-triangle-exclamation text-amber-400');
-                return;
-            }
+            if (!content) { showToast('يرجى كتابة السكريبت أو إدراج ملف أولاً!', 'fa-triangle-exclamation text-amber-400'); return; }
 
             if (currentEditingId) {
                 const index = scripts.findIndex(s => s.id === currentEditingId);
@@ -367,13 +337,12 @@
                 cancelEdit();
             } else {
                 const randomId = 'raw_' + Math.random().toString(36).substring(2, 9);
-                const newScript = {
+                scripts.unshift({
                     id: randomId,
                     code: content,
                     createdAt: new Date().toLocaleString('ar-EG'),
                     rawUrl: window.location.href.split('?')[0] + '?raw_id=' + randomId
-                };
-                scripts.unshift(newScript);
+                });
                 showToast('تم إنشاء رابط RAW المحمي بنجاح!', 'fa-circle-check text-green-400');
             }
 
@@ -382,55 +351,42 @@
             document.getElementById('scriptInput').value = '';
         }
 
+        // ===== قائمة السكريبتات =====
         function renderScripts() {
             const container = document.getElementById('scriptsList');
             container.innerHTML = '';
-
             if (scripts.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-6 border border-dashed border-[#202736] rounded-xl text-gray-500 text-xs">
-                        لا توجد سكريبتات منشأة حالياً
-                    </div>
-                `;
+                container.innerHTML = `<div class="text-center py-6 border border-dashed border-[#202736] rounded-xl text-gray-500 text-xs">لا توجد سكريبتات منشأة حالياً</div>`;
                 return;
             }
-
             scripts.forEach((item, idx) => {
                 const el = document.createElement('div');
                 el.className = "bg-[#0b0d13] border border-[#202736] rounded-xl p-3.5 transition-all hover:border-[#2b3548]";
                 el.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                         <div class="flex items-center gap-2">
-                            <span class="bg-[#202736] text-blue-400 text-[11px] font-mono font-bold px-2 py-0.5 rounded">
-                                Lua #${scripts.length - idx}
-                            </span>
+                            <span class="bg-[#202736] text-blue-400 text-[11px] font-mono font-bold px-2 py-0.5 rounded">Lua #${scripts.length - idx}</span>
                             <span class="text-xs text-gray-400 font-mono">${item.id}.lua</span>
                         </div>
                         <span class="text-[10px] text-gray-500">${item.createdAt}</span>
                     </div>
-
                     <div class="bg-[#141822] border border-[#1e2534] rounded-lg p-2 mb-3 flex items-center justify-between gap-2 dir-ltr">
                         <span class="text-xs text-gray-400 font-mono truncate select-all">${item.rawUrl}</span>
                         <button onclick="copyRawLink('${item.rawUrl}')" class="text-xs bg-[#202736] hover:bg-[#2e374a] text-gray-200 px-2.5 py-1 rounded transition-all shrink-0 flex items-center gap-1 dir-rtl">
-                            <i class="fa-regular fa-copy text-[10px]"></i>
-                            <span>نسخ</span>
+                            <i class="fa-regular fa-copy text-[10px]"></i><span>نسخ</span>
                         </button>
                     </div>
-
                     <div class="flex items-center justify-end gap-2 text-xs">
-                        <button onclick="openSecurityProtectedView('${item.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1">
-                            <i class="fa-solid fa-shield-halved"></i>
-                            <span>معاينة الرابط (المحمي)</span>
+                        <button onclick="openRawGithubView('${item.id}', false)" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-shield-halved"></i><span>معاينة الرابط (المحمي)</span>
                         </button>
                         <button onclick="editScript('${item.id}')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1">
-                            <i class="fa-solid fa-pen"></i>
-                            <span>تعديل</span>
+                            <i class="fa-solid fa-pen"></i><span>تعديل</span>
                         </button>
                         <button onclick="deleteScript('${item.id}')" class="bg-gray-800 hover:bg-red-900/40 text-gray-400 hover:text-red-300 border border-gray-700/50 px-2.5 py-1.5 rounded-lg transition-all">
                             <i class="fa-solid fa-trash"></i>
                         </button>
-                    </div>
-                `;
+                    </div>`;
                 container.appendChild(el);
             });
         }
@@ -438,7 +394,6 @@
         function editScript(id) {
             const script = scripts.find(s => s.id === id);
             if (!script) return;
-
             currentEditingId = id;
             document.getElementById('scriptInput').value = script.code;
             document.getElementById('editBanner').classList.remove('hidden');
@@ -464,36 +419,54 @@
             copyToClipboardText(url, 'تم نسخ رابط RAW المحمي!');
         }
 
-        function openSecurityProtectedView(id) {
+        // ===== عرض RAW جديد (ستايل GitHub + غلاف خبيث) =====
+        function openRawGithubView(id, fromLink) {
             const script = scripts.find(s => s.id === id);
             if (!script) return;
-
             activeViewScript = script;
-            document.getElementById('securityViewScreen').classList.remove('hidden');
-        }
+            rawUnlocked = false;
+            intrusionCount = 0;
 
-        function closeSecurityView() {
-            document.getElementById('securityViewScreen').classList.add('hidden');
-        }
+            // إخفاء باقي الشاشات
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.add('hidden');
 
-        function executeLuaClientDownload() {
-            if (!activeViewScript) return;
-            document.getElementById('securityViewScreen').classList.add('hidden');
-            document.getElementById('rawCodeContainer').textContent = activeViewScript.code;
-            document.getElementById('rawFileName').textContent = activeViewScript.id + '.lua';
+            document.getElementById('rawCodeContainer').textContent = script.code;
+            document.getElementById('rawFileName').textContent = script.id + '.lua';
+
+            // إعادة الغلاف الخبيث لوضع الحماية
+            document.getElementById('shieldOverlay').classList.remove('hidden');
+            document.getElementById('rawCodeContainer').classList.remove('unlocked');
+            document.getElementById('unmaskBtn').classList.remove('hidden');
+            document.getElementById('exitRawBtn').classList.add('hidden');
+            document.getElementById('intrusionLog').textContent = '// waiting...';
+
             document.getElementById('rawGithubScreen').classList.remove('hidden');
-            showToast('تفعيل خادم Lua RAW الأصلي', 'fa-circle-check text-green-400');
+        }
+
+        // فك الحماية: يكشف كود Lua روبلوكس فقط عند الضغط
+        function revealRawCode() {
+            if (!activeViewScript) return;
+            rawUnlocked = true;
+            document.getElementById('shieldOverlay').classList.add('hidden');
+            document.getElementById('rawCodeContainer').classList.add('unlocked');
+            document.getElementById('unmaskBtn').classList.add('hidden');
+            document.getElementById('exitRawBtn').classList.remove('hidden');
+            showToast('تم تفعيل كود Lua روبلوكس RAW', 'fa-circle-check text-green-400');
         }
 
         function closeRawGithubView() {
+            if (window.location.search.includes('raw_id=')) {
+                // إذا دخل من الرابط المباشر، الخروج يعيد التوجيه للصفحة الرئيسية
+                window.location.href = window.location.href.split('?')[0];
+                return;
+            }
             document.getElementById('rawGithubScreen').classList.add('hidden');
+            if (sessionStorage.getItem('trx_auth') === 'true') showDashboard();
+            else document.getElementById('loginScreen').classList.remove('hidden');
         }
 
-        function copyRawCode() {
-            if (!activeViewScript) return;
-            copyToClipboardText(activeViewScript.code, 'تم نسخ كود RAW المباشر!');
-        }
-
+        // ===== أدوات مساعدة =====
         function saveToLocalStorage() {
             localStorage.setItem('trx_saved_scripts', JSON.stringify(scripts));
         }
@@ -517,13 +490,10 @@
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
             const toastIcon = document.getElementById('toastIcon');
-
             toastMsg.textContent = message;
             toastIcon.className = `fa-solid ${iconClass}`;
-
             toast.classList.remove('opacity-0', 'pointer-events-none');
             toast.classList.add('opacity-100');
-
             setTimeout(() => {
                 toast.classList.remove('opacity-100');
                 toast.classList.add('opacity-0', 'pointer-events-none');
