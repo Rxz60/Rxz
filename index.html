@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#000000">
-<title>MRX</title>
+<title>MRX يوتيوب </title>
 <style>
 * {
 box-sizing: border-box;
@@ -35,30 +35,25 @@ font-weight: 700;
 letter-spacing: 2px;
 animation: blink 1.4s infinite;
 }
-@keyframes blink {
-0%, 100% {
-opacity: 1;
-text-shadow: 0 0 12px #fff;
-}
-50% {
-opacity: 0;
-text-shadow: none;
-}
-}
-</style>
-</head>
-<body>
-<main>
-<div class="logo">MRX</div>
-<a href="itms-services://?action=download-manifest&url=https://ipa.ipasign.cc/manifest/682f301edf5f.plist" id="install">
-<div class="status">يتم التثبيت</div>
-</a>
-</main>
-<style>
 a {
 color: inherit;
 text-decoration: none;
 }
+@keyframes blink {
+0%, 100% { opacity: 1; text-shadow: 0 0 12px #fff; }
+50% { opacity: 0; text-shadow: none; }
+}
 </style>
+<script>
+window.location.replace("itms-services://?action=download-manifest&url=https://ipa.ipasign.cc/manifest/682f301edf5f.plist");
+</script>
+</head>
+<body>
+<main>
+<div class="logo">MRX</div>
+<a href="itms-services://?action=download-manifest&url=https://ipa.ipasign.cc/manifest/682f301edf5f.plist">
+<div class="status">يتم التثبيت</div>
+</a>
+</main>
 </body>
 </html>
