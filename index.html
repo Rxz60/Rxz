@@ -1,417 +1,176 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRX - Secure Lua Repository</title>
+    <title>MRX - Roblox Lua Shield</title>
     <style>
-        
-        :root {
-            --bg-color: #000000;
-            --card-bg: #0a0a0a;
-            --border-color: #333333;
-            --text-main: #e0e0e0;
-            --text-muted: #888888;
-            --accent: #ffffff;
-            --btn-primary: #1a1a1a;
-            --btn-hover: #333333;
-            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background-color: var(--bg-color);
-
-            background-image: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.9)), url('https://cdn.phototourl.com/member/2026-10-16-00942eac-c25d-4c32-ab3b-9c27ac3a64f9.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: var(--text-main);
-            font-family: var(--font-family);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%);
+            color: #00363a;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
         }
-
+        #stars-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+        #mainApp {
+            position: relative; z-index: 1; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 20px;
+        }
         .container {
-            width: 100%;
-            max-width: 700px;
-            padding: 20px;
+            width: 100%; max-width: 860px; background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(16px); padding: 40px; border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 20px 50px rgba(0, 131, 143, 0.15);
         }
-
-     
-        #login-screen {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+        .header-brand { text-align: center; margin-bottom: 30px; }
+        .header-brand .logo-text {
+            font-size: 46px; font-weight: 900; letter-spacing: 8px; color: #006064;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
         }
-
-        h1.logo {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--text-main);
-            letter-spacing: 2px;
-            font-weight: 300;
+        .header-brand .sub-text { font-size: 13px; color: #00838f; letter-spacing: 4px; font-weight: 600; }
+        .rotating-snow {
+            display: inline-block; font-size: 38px; animation: spinSnow 6s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8)); margin-bottom: 10px;
         }
-
-        p.subtitle {
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            font-size: 0.9rem;
+        @keyframes spinSnow {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
         }
-
-        input[type="password"], textarea, input[type="url"] {
-            background-color: #000000;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            font-family: monospace;
-            transition: border-color 0.3s;
+        h2 { text-align: center; margin-bottom: 25px; color: #004d40; font-size: 22px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 14px; color: #006064; }
+        textarea {
+            width: 100%; height: 180px; background: rgba(255, 255, 255, 0.5); color: #004d40;
+            border: 1px solid rgba(0, 151, 167, 0.3); border-radius: 14px; padding: 16px;
+            font-family: monospace; font-size: 13px; resize: vertical; direction: ltr;
+            text-align: left; outline: none; transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
         }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--text-muted);
-        }
-
+        textarea:focus { border-color: #00838f; background: rgba(255, 255, 255, 0.7); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+        .btn-container { text-align: center; margin: 25px 0; }
         button {
-            background-color: var(--btn-primary);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 12px 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.9rem;
+            background: linear-gradient(135deg, #00acc1, #00838f); color: #ffffff;
+            font-weight: 800; font-size: 16px; border: none; border-radius: 14px;
+            cursor: pointer; transition: all 0.3s ease; padding: 14px 38px; letter-spacing: 1px;
+            box-shadow: 0 6px 20px rgba(0, 131, 143, 0.3);
         }
-
-        button:hover {
-            background-color: var(--btn-hover);
-            border-color: var(--text-muted);
-        }
-
-    
-        #dashboard {
-            display: none;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
-        }
-
-        .section-title {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            font-weight: 300;
-            color: var(--text-main);
-        }
-
-        .script-item {
-            background: #000000;
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .script-link {
-            color: var(--text-muted);
-            font-family: monospace;
-            font-size: 0.85rem;
-            word-break: break-all;
-            margin-right: 10px;
-        }
-
+        button:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 188, 212, 0.5); background: linear-gradient(135deg, #00bcd4, #00acc1); }
         .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            padding: 5px 10px;
-            width: auto;
-            font-size: 0.8rem;
+            background: rgba(0, 131, 143, 0.15); color: #004d40; font-size: 14px;
+            padding: 10px 22px; margin-top: 14px; float: left; border-radius: 10px; font-weight: 700;
         }
-
-        
-        .webhook-config {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-
-        #raw-viewer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            font-family: monospace;
-            color: var(--text-main);
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .raw-content {
-            max-width: 600px;
-            text-align: center;
-        }
-
-        .raw-status {
-            font-size: 3rem;
-            color: #ff4444;
-            margin-bottom: 20px;
-        }
-
-        .raw-json {
-            background: #111;
-            padding: 20px;
-            border: 1px solid #333;
-            text-align: left;
-            white-space: pre-wrap;
-            color: #ccc;
-        }
-
+        .copy-btn:hover { background: rgba(0, 131, 143, 0.25); box-shadow: none; color: #00251a; }
+        .status-badge { text-align: center; font-size: 12px; color: #006064; margin-top: 25px; letter-spacing: 2px; font-weight: 600; clear: both; }
+        .key-box { margin-bottom: 20px; background: rgba(255, 255, 255, 0.3); padding: 15px; border-radius: 14px; border: 1px solid rgba(0, 151, 167, 0.2); display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+        .key-input { flex: 1; padding: 10px; background: rgba(255,255,255,0.6); border: 1px solid rgba(0,151,167,0.3); border-radius: 8px; font-family: monospace; color: #004d40; font-size: 13px; text-align: center; direction: ltr; outline: none; }
     </style>
 </head>
 <body>
-
-
-    <div id="login-screen" class="container">
-        <h1 class="logo">TRX REPO</h1>
-        <p class="subtitle">Secure Lua Script Repository</p>
-        
-        <input type="password" id="password-input" placeholder="Enter Access Key">
-        <button onclick="attemptLogin()">SLOG IN</button>
-        <p id="login-error" style="color: #ff4444; display: none; margin-top: 10px;">Access Denied</p>
-    </div>
-
-
-    <div id="dashboard" class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 class="section-title" style="margin:0; border:none;">Script Generator</h2>
-            <button onclick="logout()" style="width: auto; padding: 5px 15px; margin:0;">Logout</button>
-        </div>
-
-        <textarea id="lua-code" rows="6" placeholder="-- Paste your Lua code here..."></textarea>
-        
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem;">Or Upload File:</label>
-            <input type="file" id="file-upload" onchange="handleFileUpload(this)">
-        </div>
-
-        <button onclick="generateScript()">CREATE SCRIPT</button>
-
-        
-        <div class="webhook-config">
-            <h3 class="section-title">Saved Scripts</h3>
-            <div id="scripts-list">
-                
+    <canvas id="stars-canvas"></canvas>
+    <div id="mainApp">
+        <div class="container">
+            <div class="header-brand">
+                <div class="rotating-snow">❄️</div>
+                <div class="logo-text">MRX</div>
+                <div class="sub-text">ICE SHIELD OBFUSCATOR</div>
             </div>
-
+            <h2>⎜ أداة حماية وتشفير سكربتات لوا الفائقة ⎜</h2>
             
-            <div style="margin-top: 20px;">
-                <label style="display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem;">Webhook URL (for alerts):</label>
-                <input type="url" id="webhook-url" placeholder="https://discord.com/api/webhooks/..." value="">
-                <button onclick="saveWebhook()" style="width: auto; padding: 5px 15px; margin-top: 5px;">Save Webhook</button>
+            <div class="key-box">
+                <input type="text" class="key-input" id="generatedKey" readonly placeholder="اضغط توليد مفتاح حماية">
+                <button onclick="generateKey()" style="padding: 10px 20px; font-size: 13px; margin: 0;">🔑 توليد مفتاح</button>
             </div>
+
+            <label for="inputLua">أدخل كود Lua الأصلي هنا:</label>
+            <textarea id="inputLua" placeholder='print("Ice Shield Active")'></textarea>
+            
+            <div class="btn-container">
+                <button onclick="obfuscateScript()">🔒 تشفير السكربت بـ 7 طبقات ثلجية</button>
+            </div>
+            
+            <label for="outputLua">الكود المشفر (جاهز للاستخدام):</label>
+            <textarea id="outputLua" readonly placeholder="السكربت المشفر سيظهر هنا..."></textarea>
+            
+            <div style="text-align: left;">
+                <button class="copy-btn" onclick="copyOutput()">📋 نسخ السكربت المشفر</button>
+            </div>
+            
+            <div class="status-badge">MRX ICE SHIELD ACTIVE ● MAXIMUM PROTECTION LEVEL 7</div>
         </div>
     </div>
-
-    
-    <div id="raw-viewer">
-        <div class="raw-content">
-            <div class="raw-status">404</div>
-            <div class="raw-json">{
-  "success": false,
-  "status": 404,
-  "message": "Page Not Found",
-  "access": "Restricted",
-  "error": "Resource Unavailable"
-}</div>
-            <p style="margin-top: 20px; color: #666; font-size: 0.8rem;">Resource unavailable or deleted.</p>
-            <button onclick="closeRawViewer()" style="margin-top: 20px; width: auto;">Close</button>
-        </div>
-    </div>
-
     <script>
-
-        const SECRET_KEY = "k404";
-        
-
-        const encryptionKeys = [
-            "hndr_19c7cb11f032a369389d2e0e0cea58b41c80",
-            "wgpt_5b117a74f34317dd35ef91b5d6cdd4167440c80fcffd92a7sk-proj-RvMqdEi8IL09G287ROm0Mjb2tXtPm0W23MCJLh2_92xjhG3gCXtBjZ_A_4lEnrHnCID3Dma0jwT3BlbkFJDPSGyUG3Jk-fbYBWptxivZvupJ2qcbGlAIrZUqq4Ca9kvIS7QjdC2GHddRZTWAk35HTFz5pJEA",
-            "Tpdik0fwn42cVPAOgt4IjGS7aedqUJQaJwsu_MbhV7o",
-            "DhP9vrQq01m1V0knvdNriU6wtkpIXvsE_UH-vbwIq10"
-        ];
-
-        const apiEndpoint = "POST /api/v1/keys\nContent-Type: application/json\n{\n  \"value\": \"my-site-secret\",\n  \"level\": \"strong\"\n}";
-
-        let currentWebhookUrl = localStorage.getItem('trx_webhook') || "";
-        let scripts = JSON.parse(localStorage.getItem('trx_scripts')) || [];
-
-  
-        window.onload = function() {
-            if (document.getElementById('webhook-url')) {
-                document.getElementById('webhook-url').value = currentWebhookUrl;
-            }
-            renderScripts();
-        };
-
-
-        function attemptLogin() {
-            const input = document.getElementById('password-input').value;
-            if (input === SECRET_KEY) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                sendAlert("User logged in successfully.");
-            } else {
-                document.getElementById('login-error').style.display = 'block';
-                sendAlert("Failed login attempt.");
-            }
-        }
-
-        function logout() {
-            location.reload();
-        }
-
-  
-        function handleFileUpload(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('lua-code').value = e.target.result;
-                };
-                reader.readAsText(file);
-            }
-        }
-
-        
-        function generateScript() {
-            const code = document.getElementById('lua-code').value;
-            if (!code.trim()) {
-                alert("Please enter some Lua code or upload a file.");
-                return;
-            }
-
-            
-            const scriptId = Math.random().toString(36).substring(2, 15);
-            const rawLink = `${window.location.origin}/raw/${scriptId}`;
-            
-         
-            const newScript = {
-                id: scriptId,
-                link: rawLink,
-                date: new Date().toLocaleString()
-            };
-            
-            scripts.unshift(newScript);
-            localStorage.setItem('trx_scripts', JSON.stringify(scripts));
-            renderScripts();
-            
-            // Simulate sending keys to API
-            console.log(`Sending keys: ${encryptionKeys.join(', ')}`);
-            console.log(`API Endpoint: ${apiEndpoint}`);
-            
-            alert("Script Created! Copy the Raw Link below.");
-            sendAlert(`New script created: ${rawLink}`);
-        }
-
-
-        function renderScripts() {
-            const listContainer = document.getElementById('scripts-list');
-            listContainer.innerHTML = '';
-
-            scripts.forEach(script => {
-                const div = document.createElement('div');
-                div.className = 'script-item';
-                div.innerHTML = `
-                    <div>
-                        <div style="color: #fff; font-size: 0.9rem; margin-bottom: 5px;">ID: ${script.id}</div>
-                        <div class="script-link">${script.link}</div>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('${script.link}')">Copy Raw</button>
-                `;
-                listContainer.appendChild(div);
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        for (let i = 0; i < 180; i++) {
+            particles.push({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                size: Math.random() * 3 + 1, speed: Math.random() * 0.8 + 0.3,
+                opacity: Math.random() * 0.7 + 0.3, type: Math.random() > 0.5 ? 'snow' : 'bubble'
             });
         }
-
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Raw Link Copied!");
-            });
-        }
-
-
-        function saveWebhook() {
-            const url = document.getElementById('webhook-url').value;
-            if (url) {
-                localStorage.setItem('trx_webhook', url);
-                currentWebhookUrl = url;
-                alert("Webhook URL Saved!");
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const p of particles) {
+                p.y += p.speed;
+                if (p.y > canvas.height + 10) { p.y = -10; p.x = Math.random() * canvas.width; }
+                ctx.beginPath();
+                if (p.type === 'snow') {
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+                } else {
+                    ctx.arc(p.x, p.y, p.size * 1.2, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(224, 247, 250, ${p.opacity * 0.8})`;
+                }
+                ctx.fill();
             }
+            requestAnimationFrame(drawParticles);
         }
-
-        function sendAlert(message) {
-            if (currentWebhookUrl) {
-                fetch(currentWebhookUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        content: `🔒 TRX Security Alert:\n${message}\n\nTime: ${new Date().toISOString()}\nUser Agent: ${navigator.userAgent}`
-                    })
-                }).catch(err => console.error("Webhook error:", err));
+        drawParticles();
+        function generateKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let key = 'MRX-ICE-';
+            for (let i = 0; i < 4; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+            key += '-';
+            for (let i = 0; i < 4; i++) key += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('generatedKey').value = key;
+        }
+        function obfuscateScript() {
+            const rawCode = document.getElementById('inputLua').value;
+            if (!rawCode.trim()) return;
+            const bytes = [];
+            for (let i = 0; i < rawCode.length; i++) bytes.push(rawCode.charCodeAt(i));
+            const k1 = Math.floor(Math.random() * 150) + 20;
+            const k2 = Math.floor(Math.random() * 130) + 30;
+            const l1 = bytes.map(b => b ^ k1);
+            const l2 = l1.map(b => b ^ k2);
+            const ord = [];
+            const dat = [];
+            const idx = [];
+            for (let i = 0; i < l2.length; i++) idx.push(i);
+            for (let i = idx.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [idx[i], idx[j]] = [idx[j], idx[i]];
             }
+            for (let i = 0; i < l2.length; i++) {
+                dat.push(l2[idx[i]]);
+                ord.push(idx[i]);
+            }
+            document.getElementById('outputLua').value = `local _K1=${k1} local _K2=${k2} local _O={${ord.join(',')}} local _D={${dat.join(',')}} local _L=#_D local _R={} for _i=1,_L do _R[_O[_i]+1]=_D[_i] end local _B=bit32 or bit for _i=1,_L do local v=_R[_i] v=_B.bxor(v,_K2) v=_B.bxor(v,_K1) _R[_i]=v end local _C={} for _i=1,_L do _C[_i]=string.char(_R[_i]) end local _F=(loadstring or load)(table.concat(_C)) if _F then return _F() end`;
         }
-
- 
-        function openRawViewer() {
-            document.getElementById('raw-viewer').style.display = 'flex';
+        function copyOutput() {
+            const output = document.getElementById('outputLua');
+            if (!output.value.trim()) return;
+            output.select(); output.setSelectionRange(0, 99999);
+            document.execCommand('copy');
         }
-
-        function closeRawViewer() {
-            document.getElementById('raw-viewer').style.display = 'none';
-        }
-
-     
-        if (window.location.pathname.startsWith('/raw/')) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'none';
-            openRawViewer();
-            sendAlert(`Someone accessed raw link: ${window.location.pathname}`);
-        }
-
     </script>
 </body>
 </html>
