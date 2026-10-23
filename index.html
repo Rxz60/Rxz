@@ -3,257 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DDoS Tool - Purple Edition</title>
+    <title>MRX - Roblox Lua Protection Hub</title>
     <style>
-        
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
-            background-color: #0f0518; 
-            color: #fff;
+            background: #090a0f;
+            color: #e0e6ed;
+            min-height: 100vh;
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
+            padding: 20px;
         }
-
-        
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(138, 43, 226, 0.4) 0%, rgba(0,0,0,0) 70%);
-            top: -50px;
-            left: -50px;
-            z-index: 0;
-            animation: pulse 4s infinite alternate;
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
         }
-
-        .bg-glow-2 {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(75, 0, 130, 0.3) 0%, rgba(0,0,0,0) 70%);
-            bottom: -100px;
-            right: -100px;
-            z-index: 0;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.2); opacity: 0.8; }
-        }
-
-        
         .container {
-            background: rgba(25, 10, 40, 0.85);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(138, 43, 226, 0.5);
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 900px;
+            background: rgba(15, 18, 28, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 40px;
             border-radius: 20px;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(138, 43, 226, 0.2), inset 0 0 20px rgba(138, 43, 226, 0.1);
-            z-index: 10;
-            position: relative;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);
         }
-
-        h1 {
-            color: #d4a5ff;
-            margin-bottom: 20px;
-            font-weight: 900;
-            text-shadow: 0 0 10px #8a2be2;
-            letter-spacing: 1px;
+        .header-brand { text-align: center; margin-bottom: 30px; }
+        .logo-svg {
+            width: 60px; height: 60px;
+            filter: drop-shadow(0 0 12px #00e5ff);
+            animation: pulse 4s ease-in-out infinite;
+            margin-bottom: 10px;
         }
-
-        label {
-            display: block;
-            text-align: right;
-            margin-bottom: 8px;
-            color: #bfaaff;
-            font-size: 0.9rem;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px #00e5ff); }
+            50% { transform: scale(1.08); filter: drop-shadow(0 0 22px #00e5ff); }
         }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid #5e2a84;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
+        .logo-text {
+            font-size: 48px; font-weight: 900; letter-spacing: 6px;
+            background: linear-gradient(135deg, #ffffff 0%, #00e5ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0,229,255,0.3);
         }
-
-        input:focus {
-            border-color: #bf55ff;
-            box-shadow: 0 0 10px rgba(191, 85, 255, 0.4);
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(45deg, #8a2be2, #9932cc);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
-            background: linear-gradient(45deg, #9932cc, #ba55ff);
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
+        .sub-text { font-size: 12px; color: #00e5ff; letter-spacing: 5px; font-weight: 700; text-transform: uppercase; }
+        h2 { text-align: center; margin-bottom: 25px; color: #8a99ad; font-size: 18px; font-weight: 500; }
         
-        .status-bar {
-            margin-top: 20px;
-            height: 6px;
-            background: #1a0b2e;
-            border-radius: 10px;
-            overflow: hidden;
-            display: none;
+        .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        label { font-weight: 600; font-size: 14px; color: #00e5ff; }
+        
+        .upload-btn-small {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(0, 229, 255, 0.1); color: #00e5ff;
+            padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700;
+            cursor: pointer; border: 1px solid rgba(0, 229, 255, 0.3);
+            transition: all 0.3s ease;
         }
-
-        .progress {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #8a2be2, #ff00ff);
-            box-shadow: 0 0 10px #ff00ff;
-            transition: width 0.1s linear;
+        .upload-btn-small:hover {
+            background: rgba(0, 229, 255, 0.25);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
-
-        .log-area {
-            margin-top: 15px;
-            height: 80px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 5px;
-            padding: 10px;
-            text-align: left;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #00ffaa;
-            overflow-y: auto;
-            direction: ltr;
-            border: 1px solid #333;
+        
+        textarea {
+            width: 100%; height: 180px;
+            background: rgba(5, 7, 13, 0.8);
+            color: #00ffcc;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 12px; padding: 16px;
+            font-family: 'Consolas', 'Courier New', monospace; font-size: 13px;
+            resize: vertical; direction: ltr; text-align: left; outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
         }
-
-        .ip-display {
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: #aaa;
+        textarea:focus { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.25); }
+        
+        .btn-container { text-align: center; margin: 25px 0; }
+        .encrypt-btn {
+            background: linear-gradient(135deg, #00e5ff, #0077ff);
+            color: #000; font-weight: 800; font-size: 15px;
+            border: none; border-radius: 10px; cursor: pointer;
+            transition: all 0.3s ease; padding: 14px 40px; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+            display: inline-flex; align-items: center; gap: 10px;
         }
+        .encrypt-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.7);
+        }
+        
+        .action-bar { display: flex; gap: 12px; margin-top: 15px; }
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05); color: #e0e6ed; font-size: 13px;
+            padding: 10px 20px; border-radius: 8px; font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;
+            transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+        }
+        .action-btn:hover {
+            background: rgba(0, 229, 255, 0.15); border-color: #00e5ff; color: #fff;
+        }
+        
+        .status-badge {
+            text-align: center; font-size: 11px; color: #52637a;
+            margin-top: 30px; letter-spacing: 3px; font-weight: 700;
+        }
+        
+        svg { fill: currentColor; }
     </style>
 </head>
 <body>
-
-    <div class="bg-glow"></div>
-    <div class="bg-glow-2"></div>
-
+    <canvas id="bg-canvas"></canvas>
     <div class="container">
-        <h1>⚡ DDoS Attack ⚡</h1>
-        
-        <label for="targetInput">أدخل الرابط أو الـ IP</label>
-        <input type="text" id="targetInput" placeholder="example.com or 1.1.1.1">
-        
-        <button onclick="startAttack()">بدء الهجوم</button>
-
-        <div class="status-bar" id="statusBar">
-            <div class="progress" id="progressBar"></div>
+        <div class="header-brand">
+            <svg class="logo-svg" viewBox="0 0 24 24">
+                <path d="M12,2 L14,7 L19,4 L16,9 L22,12 L16,15 L19,20 L14,17 L12,22 L10,17 L5,20 L8,15 L2,12 L8,9 L5,4 L10,7 Z"/>
+            </svg>
+            <div class="logo-text">MRX</div>
+            <div class="sub-text">ADVANCED LUA OBFUSCATOR</div>
         </div>
         
-        <div class="log-area" id="logs"></div>
-        <div class="ip-display" id="ipDisplay"></div>
+        <h2>أداة تشفير وحماية سكربتات اللوا - 30 طبقة تشفير</h2>
+        
+        <div class="label-row">
+            <label for="inputLua">الكود الأصلي:</label>
+            <label class="upload-btn-small">
+                <svg width="14" height="14" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+                رفع ملف
+                <input type="file" id="fileLoader" accept=".lua,.txt" onchange="loadFile(event)" style="display:none;">
+            </label>
+        </div>
+        
+        <textarea id="inputLua" placeholder='print("Hello World")'></textarea>
+        
+        <div class="btn-container">
+            <button class="encrypt-btn" onclick="obfuscateScript()">
+                <svg width="18" height="18" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                تشفير السكربت بـ 30 طبقة
+            </button>
+        </div>
+        
+        <label for="outputLua">الكود المشفر النهائي:</label>
+        <textarea id="outputLua" readonly placeholder="النتيجة تظهر هنا..."></textarea>
+        
+        <div class="action-bar">
+            <button class="action-btn" onclick="copyOutput()">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                نسخ السكربت
+            </button>
+            <button class="action-btn" onclick="downloadOutput()">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                تحميل الملف (.lua)
+            </button>
+        </div>
+        
+        <div class="status-badge">MRX SYSTEM ONLINE ● 30-LAYER PROTECTION ACTIVE</div>
     </div>
 
     <script>
-        let isAttacking = false;
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        function log(msg) {
-            const logs = document.getElementById('logs');
-            const p = document.createElement('p');
-            p.innerText = `> ${msg}`;
-            logs.appendChild(p);
-            logs.scrollTop = logs.scrollHeight;
+        for (let i = 0; i < 80; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2 + 0.5,
+                speedY: Math.random() * 0.5 + 0.2,
+                opacity: Math.random() * 0.5 + 0.2
+            });
         }
 
-        function startAttack() {
-            if (isAttacking) return;
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (const p of particles) {
+                p.y -= p.speedY;
+                if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 229, 255, ${p.opacity})`;
+                ctx.fill();
+            }
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+
+        function loadFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const r = new FileReader();
+            r.onload = function(evt) { document.getElementById('inputLua').value = evt.target.result; };
+            r.readAsText(file);
+        }
+
+        function sanitizeCode(code) {
+            let clean = code.replace(/--\[\[[\s\S]*?\]\]/g, '');
+            clean = clean.replace(/--.*$/gm, '');
+            return clean;
+        }
+
+        function obfuscateScript() {
+            const rawCode = document.getElementById('inputLua').value;
+            if (!rawCode.trim()) return;
             
-            const target = document.getElementById('targetInput').value.trim();
-            if (!target) {
-                alert("الرجاء إدخال الرابط أو الـ IP أولاً");
-                return;
+            let code = sanitizeCode(rawCode);
+            
+            let bytes = [];
+            for (let i = 0; i < code.length; i++) {
+                bytes.push(code.charCodeAt(i));
             }
 
-   
-            document.getElementById('logs').innerHTML = '';
-            document.getElementById('statusBar').style.display = 'block';
-            document.getElementById('ipDisplay').innerText = `Target: ${target}`;
-            
-            isAttacking = true;
-            const btn = document.querySelector('button');
-            btn.innerText = "جاري الهجوم...";
-            btn.style.background = "#333";
-            
-            let progress = 0;
-            const bar = document.getElementById('progressBar');
-            
-     
-            const interval = setInterval(() => {
-                progress += Math.random() * 5;
-                if (progress > 100) progress = 100;
-                
-                bar.style.width = progress + '%';
-                
-                const actions = [
-                    "Sending SYN packets...",
-                    "UDP Flood initiated...",
-                    "Bypassing firewall...",
-                    "Connecting to proxy network...",
-                    "Payload sent: " + Math.floor(Math.random() * 9999) + "KB",
-                    "Requesting handshake..."
-                ];
-                
-                if (Math.random() > 0.7) {
-                    log(actions[Math.floor(Math.random() * actions.length)]);
-                }
+            const layersCount = 30;
+            const keys = [];
 
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    isAttacking = false;
-                    btn.innerText = "انتهى الهجوم ✅";
-                    log("Attack completed successfully!");
-                    
-                    setTimeout(() => {
-                        btn.style.background = "linear-gradient(45deg, #8a2be2, #9932cc)";
-                        document.getElementById('statusBar').style.display = 'none';
-                        bar.style.width = '0%';
-                    }, 3000);
+            for (let l = 0; l < layersCount; l++) {
+                const key = Math.floor(Math.random() * 200) + 1;
+                keys.push(key);
+                for (let i = 0; i < bytes.length; i++) {
+                    bytes[i] = bytes[i] ^ key;
                 }
-            }, 100);
+            }
+
+            const indices = Array.from({length: bytes.length}, (_, i) => i);
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+
+            const shuffledData = new Array(bytes.length);
+            for (let i = 0; i < bytes.length; i++) {
+                shuffledData[i] = bytes[indices[i]];
+            }
+
+            const keysString = keys.join(',');
+            const indicesString = indices.join(',');
+            const dataString = shuffledData.join(',');
+
+            const protectedLua = `local _K={${keysString}} local _I={${indicesString}} local _D={${dataString}} local _L=#_D local _R={} for i=1,_L do _R[_I[i]+1]=_D[i] end local _B=bit32 or bit for k=1,#_K do local key=_K[#_K-k+1] for i=1,_L do _R[i]=_B.bxor(_R[i],key) end end local _C={} for i=1,_L do _C[i]=string.char(_R[i]) end local _F=(loadstring or load)(table.concat(_C)) if _F then return _F() end`;
+
+            document.getElementById('outputLua').value = protectedLua;
+        }
+
+        function copyOutput() {
+            const output = document.getElementById('outputLua');
+            if (!output.value.trim()) return;
+            output.select();
+            output.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(output.value);
+        }
+
+        function downloadOutput() {
+            const val = document.getElementById('outputLua').value;
+            if (!val.trim()) return;
+            const blob = new Blob([val], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'MRX_Protected_30L.lua';
+            a.click();
         }
     </script>
 </body>
