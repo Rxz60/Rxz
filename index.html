@@ -128,7 +128,7 @@
             <div class="btn-container">
                 <button class="encrypt-btn" onclick="obfuscateScript()">
                     <svg width="18" height="18" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    تشفير السكربت بـ 30 طبقة ثلجية
+                    تشفير السكربت بـ 30 طبقة فخمة
                 </button>
             </div>
             
@@ -240,7 +240,38 @@
             const indicesString = indices.join(',');
             const dataString = shuffledData.join(',');
 
-            const protectedLua = `local _K={${keysString}} local _I={${indicesString}} local _D={${dataString}} local _L=#_D local _R={} for i=1,_L do _R[_I[i]+1]=_D[i] end local _B=bit32 or bit for k=1,#_K do local key=_K[#_K-k+1] for i=1,_L do _R[i]=_B.bxor(_R[i],key) end end local _C={} for i=1,_L do _C[i]=string.char(_R[i]) end local _F=(loadstring or load)(table.concat(_C)) if _F then return _F() end`;
+        // حفظ تشفيري اذا شفت الكود انت الي جبت برمجت الموقع ترا ذا داله عشان احفظ تشفيري وبس 
+            const protectedLua = `-- تم تشفيرك من قبل MRX\n` +
+`local _ok, _r = pcall(function()\n` +
+`    if type(debug)~="table" or type(debug.info)~="function" then return true end\n` +
+`    local _known = function() end\n` +
+`    local _s2, _l2 = debug.info(_known, "sl")\n` +
+`    if _s2 == "[C]" or _l2 == -1 then return false end\n` +
+`    local _K = {${keysString}}\n` +
+`    local _I = {${indicesString}}\n` +
+`    local _D = {${dataString}}\n` +
+`    local _L = #_D\n` +
+`    local _R = {}\n` +
+`    for _i = 1, _L do\n` +
+`        _R[_I[_i] + 1] = _D[_i]\n` +
+`    end\n` +
+`    local _B = bit32 or bit\n` +
+`    for _k = 1, #_K do\n` +
+`        local _key = _K[#_K - _k + 1]\n` +
+`        for _i = 1, _L do\n` +
+`            _R[_i] = _B.bxor(_R[_i], _key)\n` +
+`        end\n` +
+`    end\n` +
+`    local _C = {}\n` +
+`    for _i = 1, _L do\n` +
+`        _C[_i] = string.char(_R[_i])\n` +
+`    end\n` +
+`    local _F = (loadstring or load)(table.concat(_C))\n` +
+`    if _F then return _F() end\n` +
+`end)\n` +
+`if not _ok then\n` +
+`    error("Security Check Failed")\n` +
+`end`;
 
             document.getElementById('outputLua').value = protectedLua;
         }
