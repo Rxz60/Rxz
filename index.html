@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRX - Roblox Lua تشفير</title>
+    <title>MRX - Roblox Lua تشويش شفرات </title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -112,7 +112,7 @@
                 <div class="sub-text">ICE SHIELD OBFUSCATOR</div>
             </div>
             
-            <h2>⎜ أداة تشفير وحماية سكربتات لوا الفائقة (30 طبقة) ⎜</h2>
+            <h2>⎜ أداة تشفير وحماية سكربتات لوا الفائقة (50 طبقة) ⎜</h2>
             
             <div class="label-row">
                 <label for="inputLua">أدخل كود Lua الأصلي هنا:</label>
@@ -128,7 +128,7 @@
             <div class="btn-container">
                 <button class="encrypt-btn" onclick="obfuscateScript()">
                     <svg width="18" height="18" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    تشفير السكربت بـ 30 طبقة فخمة
+                    تشفير السكربت بـ 50 طبقة فخمة
                 </button>
             </div>
             
@@ -146,7 +146,7 @@
                 </button>
             </div>
             
-            <div class="status-badge">MRX ICE SHIELD ACTIVE ● 30-LAYER PROTECTION LEVEL</div>
+            <div class="status-badge">MRX ICE SHIELD ACTIVE ● 50-LAYER PROTECTION LEVEL</div>
         </div>
     </div>
 
@@ -214,7 +214,7 @@
                 bytes.push(code.charCodeAt(i));
             }
 
-            const layersCount = 30;
+            const layersCount = 50;
             const keys = [];
 
             for (let l = 0; l < layersCount; l++) {
@@ -240,7 +240,7 @@
             const indicesString = indices.join(',');
             const dataString = shuffledData.join(',');
 
-        // حفظ تشفيري اذا شفت الكود انت الي جبت برمجت الموقع ترا ذا داله عشان احفظ تشفيري وبس 
+         
             const protectedLua = `-- تم تشفيرك من قبل MRX\n` +
 `local _ok, _r = pcall(function()\n` +
 `    if type(debug)~="table" or type(debug.info)~="function" then return true end\n` +
@@ -290,7 +290,7 @@
             const blob = new Blob([val], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'MRX_Protected_30L.lua';
+            a.download = 'MRX_تم تشفيرك.lua';
             a.click();
         }
     </script>
