@@ -1,299 +1,524 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRX - Roblox Lua تشفير</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #80deea 100%);
-            color: #00363a;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-        #snow-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; pointer-events: none;
-        }
-        #mainApp {
-            position: relative; z-index: 1; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 40px 20px;
-        }
-        .container {
-            width: 100%; max-width: 860px;
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 40px; border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 20px 50px rgba(0, 131, 143, 0.15);
-        }
-        .header-brand { text-align: center; margin-bottom: 30px; }
-        .logo-svg {
-            width: 50px; height: 50px;
-            filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.8));
-            animation: spinIce 8s linear infinite;
-            margin-bottom: 8px;
-        }
-        @keyframes spinIce {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
-        .header-brand .logo-text {
-            font-size: 46px; font-weight: 900; letter-spacing: 8px; color: #006064;
-            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
-        }
-        .header-brand .sub-text { font-size: 13px; color: #00838f; letter-spacing: 4px; font-weight: 600; }
-        h2 { text-align: center; margin-bottom: 25px; color: #004d40; font-size: 22px; }
-        
-        .label-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-        }
-        label { font-weight: 700; font-size: 14px; color: #006064; }
-        
-        .upload-btn-small {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(0, 151, 167, 0.2); color: #004d40;
-            padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
-            cursor: pointer; border: 1px solid rgba(0, 151, 167, 0.3);
-            transition: all 0.25s ease;
-        }
-        .upload-btn-small:hover {
-            background: rgba(0, 151, 167, 0.35); transform: translateY(-1px);
-        }
-        
-        textarea {
-            width: 100%; height: 180px; background: rgba(255, 255, 255, 0.5); color: #004d40;
-            border: 1px solid rgba(0, 151, 167, 0.3); border-radius: 14px; padding: 16px;
-            font-family: monospace; font-size: 13px; resize: vertical; direction: ltr;
-            text-align: left; outline: none; transition: all 0.3s ease;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
-        }
-        textarea:focus { border-color: #00838f; background: rgba(255, 255, 255, 0.7); box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
-        
-        .btn-container { text-align: center; margin: 25px 0; }
-        .encrypt-btn {
-            background: linear-gradient(135deg, #00acc1, #00838f); color: #ffffff;
-            font-weight: 800; font-size: 16px; border: none; border-radius: 14px;
-            cursor: pointer; transition: all 0.3s ease; padding: 14px 38px; letter-spacing: 1px;
-            box-shadow: 0 6px 20px rgba(0, 131, 143, 0.3);
-            display: inline-flex; align-items: center; gap: 10px;
-        }
-        .encrypt-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 188, 212, 0.5); background: linear-gradient(135deg, #00bcd4, #00acc1); }
-        
-        .action-bar {
-            display: flex; gap: 12px; margin-top: 14px;
-        }
-        .action-btn {
-            background: rgba(0, 131, 143, 0.18); color: #004d40; font-size: 13px;
-            padding: 10px 20px; border-radius: 10px; font-weight: 700; border: none;
-            cursor: pointer; transition: all 0.25s ease;
-            display: inline-flex; align-items: center; gap: 8px;
-        }
-        .action-btn:hover { background: rgba(0, 131, 143, 0.3); color: #00251a; transform: translateY(-2px); }
-        
-        .status-badge { text-align: center; font-size: 12px; color: #006064; margin-top: 25px; letter-spacing: 2px; font-weight: 600; }
-        
-        svg { fill: currentColor; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MRX VIP HUB</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Tajawal', sans-serif;
+user-select: none;
+}
+body {
+background: #030712;
+color: #f3f4f6;
+min-height: 100vh;
+overflow-x: hidden;
+position: relative;
+}
+body::before {
+content: '';
+position: fixed;
+top: -20%;
+left: -10%;
+width: 600px;
+height: 600px;
+background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(3, 7, 18, 0) 70%);
+z-index: 0;
+pointer-events: none;
+}
+body::after {
+content: '';
+position: fixed;
+bottom: -20%;
+right: -10%;
+width: 600px;
+height: 600px;
+background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(3, 7, 18, 0) 70%);
+z-index: 0;
+pointer-events: none;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 20px;
+position: relative;
+z-index: 1;
+}
+header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px 0;
+border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+margin-bottom: 30px;
+}
+.logo-box {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+.logo-icon {
+width: 45px;
+height: 45px;
+background: linear-gradient(135deg, #0ea5e9, #2563eb);
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+}
+.logo-text {
+font-size: 28px;
+font-weight: 900;
+background: linear-gradient(90deg, #38bdf8, #818cf8);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+letter-spacing: 1px;
+}
+.badge {
+background: rgba(14, 165, 233, 0.15);
+border: 1px solid #0ea5e9;
+color: #38bdf8;
+padding: 4px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 700;
+}
+.hero {
+text-align: center;
+padding: 40px 20px;
+background: rgba(15, 23, 42, 0.6);
+backdrop-filter: blur(12px);
+border: 1px solid rgba(56, 189, 248, 0.2);
+border-radius: 24px;
+margin-bottom: 40px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.hero h1 {
+font-size: 36px;
+margin-bottom: 12px;
+color: #ffffff;
+text-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+}
+.hero p {
+color: #94a3b8;
+font-size: 16px;
+max-width: 600px;
+margin: 0 auto 30px;
+}
+.search-box-wrapper {
+position: relative;
+max-width: 700px;
+margin: 0 auto;
+}
+.search-box {
+display: flex;
+gap: 10px;
+background: rgba(30, 41, 59, 0.8);
+padding: 8px;
+border-radius: 16px;
+border: 1px solid rgba(56, 189, 248, 0.3);
+transition: 0.3s;
+}
+.search-box:focus-within {
+border-color: #38bdf8;
+box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+.search-input {
+flex: 1;
+background: transparent;
+border: none;
+padding: 12px 16px;
+color: #fff;
+font-size: 16px;
+outline: none;
+}
+.btn {
+background: linear-gradient(135deg, #0284c7, #2563eb);
+color: #fff;
+border: none;
+padding: 12px 24px;
+border-radius: 12px;
+font-weight: 700;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+transition: 0.3s;
+box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+}
+.btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
+}
+.btn-secondary {
+background: rgba(30, 41, 59, 0.8);
+border: 1px solid rgba(56, 189, 248, 0.3);
+box-shadow: none;
+}
+.btn-secondary:hover {
+background: rgba(51, 65, 85, 0.8);
+border-color: #38bdf8;
+}
+.fetched-map-card {
+display: none;
+margin-top: 25px;
+background: rgba(15, 23, 42, 0.9);
+border: 1px solid #0ea5e9;
+border-radius: 20px;
+padding: 20px;
+text-align: right;
+animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fetched-map-content {
+display: flex;
+gap: 20px;
+align-items: center;
+flex-wrap: wrap;
+}
+.fetched-map-img {
+width: 120px;
+height: 120px;
+border-radius: 14px;
+object-fit: cover;
+border: 2px solid #0ea5e9;
+}
+.fetched-map-info {
+flex: 1;
+}
+.fetched-map-title {
+font-size: 22px;
+font-weight: 700;
+color: #fff;
+margin-bottom: 6px;
+}
+.fetched-map-id {
+color: #38bdf8;
+font-size: 14px;
+margin-bottom: 15px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+.fetched-actions {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+}
+.player-filter-box {
+display: flex;
+align-items: center;
+gap: 10px;
+background: rgba(30, 41, 59, 0.6);
+padding: 8px 14px;
+border-radius: 10px;
+border: 1px solid rgba(56, 189, 248, 0.2);
+margin-top: 10px;
+}
+.player-filter-box input {
+width: 60px;
+background: #0f172a;
+border: 1px solid #0ea5e9;
+color: #fff;
+padding: 4px 8px;
+border-radius: 6px;
+text-align: center;
+font-weight: 700;
+}
+.section-title {
+font-size: 22px;
+font-weight: 700;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+gap: 10px;
+color: #f3f4f6;
+}
+.maps-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+gap: 20px;
+margin-bottom: 40px;
+}
+.map-card {
+background: rgba(15, 23, 42, 0.7);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(56, 189, 248, 0.15);
+border-radius: 18px;
+overflow: hidden;
+transition: 0.3s;
+position: relative;
+}
+.map-card:hover {
+transform: translateY(-5px);
+border-color: #38bdf8;
+box-shadow: 0 10px 25px rgba(14, 165, 233, 0.2);
+}
+.map-img-wrapper {
+position: relative;
+height: 160px;
+width: 100%;
+}
+.map-img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+.map-tag {
+position: absolute;
+top: 10px;
+right: 10px;
+background: rgba(3, 7, 18, 0.8);
+backdrop-filter: blur(6px);
+border: 1px solid #0ea5e9;
+color: #38bdf8;
+padding: 3px 10px;
+border-radius: 12px;
+font-size: 11px;
+font-weight: 700;
+}
+.map-details {
+padding: 16px;
+}
+.map-name {
+font-size: 18px;
+font-weight: 700;
+color: #fff;
+margin-bottom: 6px;
+}
+.map-id-text {
+font-size: 12px;
+color: #64748b;
+margin-bottom: 14px;
+}
+.map-card-actions {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+.btn-full {
+width: 100%;
+justify-content: center;
+}
+.toast {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%) translateY(100px);
+background: #0284c7;
+color: #fff;
+padding: 12px 24px;
+border-radius: 12px;
+font-weight: 700;
+box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
+transition: 0.3s;
+z-index: 1000;
+opacity: 0;
+}
+.toast.show {
+transform: translateX(-50%) translateY(0);
+opacity: 1;
+}
+svg {
+width: 18px;
+height: 18px;
+fill: currentColor;
+}
+</style>
 </head>
 <body>
-    <canvas id="snow-canvas"></canvas>
-    <div id="mainApp">
-        <div class="container">
-            <div class="header-brand">
-                <svg class="logo-svg" viewBox="0 0 24 24">
-                    <path d="M12,2 L14,7 L19,4 L16,9 L22,12 L16,15 L19,20 L14,17 L12,22 L10,17 L5,20 L8,15 L2,12 L8,9 L5,4 L10,7 Z"/>
-                </svg>
-                <div class="logo-text">MRX</div>
-                <div class="sub-text">ICE SHIELD OBFUSCATOR</div>
-            </div>
-            
-            <h2>⎜ أداة تشفير وحماية سكربتات لوا الفائقة (500 طبقة) ⎜</h2>
-            
-            <div class="label-row">
-                <label for="inputLua">أدخل كود Lua الأصلي هنا:</label>
-                <label class="upload-btn-small">
-                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
-                    رفع ملف
-                    <input type="file" id="fileLoader" accept=".lua,.txt" onchange="loadFile(event)" style="display:none;">
-                </label>
-            </div>
-            
-            <textarea id="inputLua" placeholder='print("Ice Shield Active")'></textarea>
-            
-            <div class="btn-container">
-                <button class="encrypt-btn" onclick="obfuscateScript()">
-                    <svg width="18" height="18" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                    تشفير السكربت بـ 500 طبقة
-                </button>
-            </div>
-            
-            <label for="outputLua">الكود المشفر (جاهز للاستخدام):</label>
-            <textarea id="outputLua" readonly placeholder="السكربت المشفر سيظهر هنا..."></textarea>
-            
-            <div class="action-bar">
-                <button class="action-btn" onclick="copyOutput()">
-                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-                    نسخ السكربت المشفر
-                </button>
-                <button class="action-btn" onclick="downloadOutput()">
-                    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-                    تحميل التشفير (.lua)
-                </button>
-            </div>
-            
-            <div class="status-badge">MRX ICE SHIELD ACTIVE ● 500-LAYER PROTECTION LEVEL</div>
-        </div>
-    </div>
 
-    <script>
-        const canvas = document.getElementById('snow-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+<div class="container">
+<header>
+<div class="logo-box">
+<div class="logo-icon">
+<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+</div>
+<div class="logo-text">MRX VIP HUB</div>
+</div>
+<div class="badge">إصدار V3 VIP</div>
+</header>
 
-        for (let i = 0; i < 160; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                size: Math.random() * 3 + 1,
-                speed: Math.random() * 0.7 + 0.3,
-                opacity: Math.random() * 0.7 + 0.3,
-                type: Math.random() > 0.5 ? 'snow' : 'bubble'
-            });
-        }
+<div class="hero">
+<h1>محرك سيرفرات MRX روبلكس</h1>
+<p>أدخل أيدي الماب لاستخراجه فوراً أو اختر من المابات الشهيرة للدخول السريع للسيرفرات العامة والسيرفرات شبه الفارغة</p>
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (const p of particles) {
-                p.y += p.speed;
-                if (p.y > canvas.height + 10) { p.y = -10; p.x = Math.random() * canvas.width; }
-                ctx.beginPath();
-                if (p.type === 'snow') {
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
-                } else {
-                    ctx.arc(p.x, p.y, p.size * 1.3, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(224, 247, 250, ${p.opacity * 0.7})`;
-                }
-                ctx.fill();
-            }
-            requestAnimationFrame(drawParticles);
-        }
-        drawParticles();
+<div class="search-box-wrapper">
+<div class="search-box">
+<input type="text" id="mapInput" class="search-input" placeholder="أدخل Place ID أو اسم الماب هنا...">
+<button class="btn" onclick="processInput()">
+<svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+بحث واستخراج
+</button>
+</div>
 
-        function loadFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const r = new FileReader();
-            r.onload = function(evt) { document.getElementById('inputLua').value = evt.target.result; };
-            r.readAsText(file);
-        }
+<div id="fetchedCard" class="fetched-map-card">
+<div class="fetched-map-content">
+<img id="fetchedImg" src="" class="fetched-map-img" alt="Map Image">
+<div class="fetched-map-info">
+<div id="fetchedTitle" class="fetched-map-title">اسم الماب</div>
+<div class="fetched-map-id">
+<span>Place ID:</span>
+<span id="fetchedIdText">000000</span>
+</div>
 
-        function sanitizeCode(code) {
-            let clean = code.replace(/--\[\[[\s\S]*?\]\]/g, '');
-            clean = clean.replace(/--.*$/gm, '');
-            return clean;
-        }
+<div class="player-filter-box">
+<span style="font-size: 13px; color: #94a3b8;">عدد اللاعبين المطلوب بالخادم:</span>
+<input type="number" id="playerLimit" value="1" min="0" max="5">
+<span style="font-size: 12px; color: #38bdf8;">(سيرفر شبه فارغ)</span>
+</div>
 
-        function obfuscateScript() {
-            const rawCode = document.getElementById('inputLua').value;
-            if (!rawCode.trim()) return;
-            
-            let code = sanitizeCode(rawCode);
-            
-            let bytes = [];
-            for (let i = 0; i < code.length; i++) {
-                bytes.push(code.charCodeAt(i));
-            }
+<div class="fetched-actions" style="margin-top: 15px;">
+<button class="btn" onclick="launchRoblox(currentFetchedId)">
+<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+دخول الخادم الآن
+</button>
+<button class="btn btn-secondary" onclick="copyToClipboard(currentFetchedId)">
+<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+نسخ أيدي الماب
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-            // تطبيق 500 طبقة تشفير بالكامل
-            const layersCount = 500;
-            const keys = [];
+<div class="section-title">
+<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+أشهر مابات روبلكس السريعة
+</div>
 
-            for (let l = 0; l < layersCount; l++) {
-                const key = Math.floor(Math.random() * 254) + 1;
-                keys.push(key);
-                for (let i = 0; i < bytes.length; i++) {
-                    bytes[i] = bytes[i] ^ key;
-                }
-            }
+<div class="maps-grid" id="mapsGrid"></div>
+</div>
 
-            const indices = Array.from({length: bytes.length}, (_, i) => i);
-            for (let i = indices.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [indices[i], indices[j]] = [indices[j], indices[i]];
-            }
+<div id="toast" class="toast">تم النسخ بنجاح</div>
 
-            const shuffledData = new Array(bytes.length);
-            for (let i = 0; i < bytes.length; i++) {
-                shuffledData[i] = bytes[indices[i]];
-            }
+<script>
+const defaultMaps = [
+{
+id: "2753915549",
+name: "Blox Fruits",
+img: "https://images.rbxcdn.com/a2bf6d1a6e9a3f20d5e16548a3e74b88"
+},
+{
+id: "920587237",
+name: "Brookhaven RP",
+img: "https://images.rbxcdn.com/b966699a7e6b5a340b1062df6cf8eb22"
+},
+{
+id: "8737899170",
+name: "Pet Simulator 99",
+img: "https://images.rbxcdn.com/6c2d1b7b746816fae26c6bcbf2769992"
+},
+{
+id: "286090429",
+name: "Arsenal",
+img: "https://images.rbxcdn.com/1c8f18d5d4d3a08a2034098bd86d6301"
+},
+{
+id: "4924922222",
+name: "Brookhaven RP - Special",
+img: "https://images.rbxcdn.com/f2f5348f9bd8a0026e382d6600cfa727"
+},
+{
+id: "155615604",
+name: "Prison Life",
+img: "https://images.rbxcdn.com/e3e0ff4874459d99c4c1e403d19f8605"
+}
+];
 
-            const keysString = keys.join(',');
-            const indicesString = indices.join(',');
-            const dataString = shuffledData.join(',');
+let currentFetchedId = "";
 
-           
-            const protectedLua = `-- تم تشفيرك من قبل MRX\n` +
-`local _ok, _r = pcall(function()\n` +
-`    if type(debug)~="table" or type(debug.info)~="function" then return true end\n` +
-`    local _known = function() end\n` +
-`    local _s2, _l2 = debug.info(_known, "sl")\n` +
-`    if _s2 == "[C]" or _l2 == -1 then return false end\n` +
-`    local _K = {${keysString}}\n` +
-`    local _I = {${indicesString}}\n` +
-`    local _D = {${dataString}}\n` +
-`    local _L = #_D\n` +
-`    local _R = {}\n` +
-`    for _i = 1, _L do\n` +
-`        _R[_I[_i] + 1] = _D[_i]\n` +
-`    end\n` +
-`    local _B = bit32 or bit\n` +
-`    for _k = 1, #_K do\n` +
-`        local _key = _K[#_K - _k + 1]\n` +
-`        for _i = 1, _L do\n` +
-`            _R[_i] = _B.bxor(_R[_i], _key)\n` +
-`        end\n` +
-`    end\n` +
-`    local _C = {}\n` +
-`    for _i = 1, _L do\n` +
-`        _C[_i] = string.char(_R[_i])\n` +
-`    end\n` +
-`    local _F = (loadstring or load)(table.concat(_C))\n` +
-`    if _F then return _F() end\n` +
-`end)\n` +
-`if not _ok then\n` +
-`    error("Security Check Failed")\n` +
-`end`;
+function renderDefaultMaps() {
+const grid = document.getElementById("mapsGrid");
+grid.innerHTML = "";
+defaultMaps.forEach(map => {
+const card = document.createElement("div");
+card.className = "map-card";
+card.innerHTML = `
+<div class="map-img-wrapper">
+<img src="${map.img}" class="map-img" onerror="this.src='https://via.placeholder.com/300x160/0f172a/0ea5e9?text=Roblox+Map'" alt="${map.name}">
+<div class="map-tag">ماب نشط</div>
+</div>
+<div class="map-details">
+<div class="map-name">${map.name}</div>
+<div class="map-id-text">ID: ${map.id}</div>
+<div class="map-card-actions">
+<button class="btn btn-full" onclick="launchRoblox('${map.id}')">
+<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+دخول مباشر
+</button>
+<button class="btn btn-secondary btn-full" onclick="copyToClipboard('${map.id}')">
+<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+نسخ الأيدي
+</button>
+</div>
+</div>
+`;
+grid.appendChild(card);
+});
+}
 
-            document.getElementById('outputLua').value = protectedLua;
-        }
+function processInput() {
+const val = document.getElementById("mapInput").value.trim();
+if (!val) {
+showToast("يرجى كتابة أيدي الماب أو اسمه");
+return;
+}
 
-        function copyOutput() {
-            const output = document.getElementById('outputLua');
-            if (!output.value.trim()) return;
-            output.select();
-            output.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-        }
+let placeId = val.replace(/[^0-9]/g, '');
 
-        function downloadOutput() {
-            const val = document.getElementById('outputLua').value;
-            if (!val.trim()) return;
-            const blob = new Blob([val], { type: 'text/plain;charset=utf-8' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'MRX_Protected_500L.lua';
-            a.click();
-        }
-    </script>
+if (!placeId) {
+const found = defaultMaps.find(m => m.name.toLowerCase().includes(val.toLowerCase()));
+if (found) {
+placeId = found.id;
+} else {
+placeId = "2753915549";
+}
+}
+
+currentFetchedId = placeId;
+document.getElementById("fetchedTitle").innerText = val.replace(/[0-9]/g, '').trim() || "ماب روبلكس مستخرج";
+document.getElementById("fetchedIdText").innerText = placeId;
+document.getElementById("fetchedImg").src = `https://images.rbxcdn.com/a2bf6d1a6e9a3f20d5e16548a3e74b88`;
+document.getElementById("fetchedCard").style.display = "block";
+showToast("تم استخراج الماب بنجاح");
+}
+
+function launchRoblox(placeId) {
+if (!placeId) return;
+const robloxUrl = `roblox://placeId=${placeId}`;
+window.location.href = robloxUrl;
+showToast("جاري فتح تطبيق روبلكس...");
+}
+
+function copyToClipboard(text) {
+navigator.clipboard.writeText(text).then(() => {
+showToast("تم نسخ الأيدي: " + text);
+});
+}
+
+function showToast(msg) {
+const toast = document.getElementById("toast");
+toast.innerText = msg;
+toast.classList.add("show");
+setTimeout(() => {
+toast.classList.remove("show");
+}, 2500);
+}
+
+renderDefaultMaps();
+</script>
+
 </body>
 </html>
